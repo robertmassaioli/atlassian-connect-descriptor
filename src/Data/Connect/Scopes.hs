@@ -1,6 +1,8 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Data.Connect.Scopes where
+module Data.Connect.Scopes
+    ( ProductScope(..)
+    ) where
 
 import           Control.Monad (mzero)
 import           Data.Aeson

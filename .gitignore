@@ -6,3 +6,8 @@
 # IntelliJ Idea
 *.iml
 /.idea
+
+# Dependencies
+*.dot
+*.out
+*.ps

@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 module Data.Connect.Webhooks
    ( Webhook(..)
@@ -8,6 +8,7 @@ module Data.Connect.Webhooks
 import           Data.Aeson
 import           Data.Aeson.Types
 import           Data.Connect.AesonHelpers
+import           Data.Connect.BaseTypes
 import qualified Data.Text                 as T
 import           GHC.Generics
 

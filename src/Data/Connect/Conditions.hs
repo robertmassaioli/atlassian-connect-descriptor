@@ -1,6 +1,16 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Data.Connect.Conditions where
+module Data.Connect.Conditions
+    ( Condition(..)
+    , ConditionType(..)
+    , ConditionSource(..)
+    , JIRACondition(..)
+    , ConfluenceCondition(..)
+    , staticJiraCondition
+    , staticConfluenceCondition
+    , remoteCondition
+    , invertCondition
+    ) where
 
 import           Data.Aeson
 import           Data.Connect.AesonHelpers
