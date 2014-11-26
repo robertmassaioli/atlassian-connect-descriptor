@@ -1,0 +1,8 @@
+# Cabal Build files
+/dist
+/.cabal-sandbox
+/cabal.sandbox.config
+
+# IntelliJ Idea
+*.iml
+/.idea
