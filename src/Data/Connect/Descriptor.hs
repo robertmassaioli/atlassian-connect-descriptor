@@ -47,8 +47,8 @@ module Data.Connect.Descriptor (
    , defaultLifecycle
    -- * Add-on Modules
    , Modules(..)
-   , JiraModules(..)
-   , emptyJiraModules
+   , JIRAModules(..)
+   , emptyJIRAModules
    , ConfluenceModules(..)
    , emptyConfluenceModules
    , WebPanel(..)
