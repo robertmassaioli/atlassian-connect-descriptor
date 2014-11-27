@@ -43,7 +43,7 @@ build-type:          Simple
 -- extra-source-files:  
 
 -- Constraint on the version of Cabal needed to build this package.
-cabal-version:       >=1.10
+cabal-version:       >=1.20
 
 flag network-uri
    description: Get Network.URI from the network-uri package
@@ -85,4 +85,16 @@ library
   -- Base language which the package is written in.
   default-language:    Haskell2010
   ghc-options: -Wall
-  
+
+Test-Suite test-conditions
+  hs-source-dirs: tests, src
+  type:        detailed-0.9
+  test-module: Test
+  other-modules: Util
+  build-depends:
+    base
+    , Cabal >= 1.20
+    , HUnit
+    , atlassian-connect-descriptor
+  default-language:    Haskell2010
+  ghc-options: -Wall
