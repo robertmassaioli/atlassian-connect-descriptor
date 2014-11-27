@@ -55,7 +55,11 @@ library
   
   -- Modules included in this library but not exported.
   other-modules:      Data.Connect.AesonHelpers
+                      , Data.Connect.BaseTypes
                       , Data.Connect.Conditions
+                      , Data.Connect.Lifecycle
+                      , Data.Connect.Modules
+                      , Data.Connect.OrphanInstances
                       , Data.Connect.Scopes
                       , Data.Connect.Webhooks
   
