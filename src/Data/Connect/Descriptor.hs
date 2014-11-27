@@ -27,16 +27,47 @@ You can use this library to make your own. This library will experience change w
 changes. There are likely to be many breaking changes but we will keep track of them using the standard Haskell version
 structure.
 -}
-module Data.Connect.Descriptor
-   ( Plugin(..)
+module Data.Connect.Descriptor (
+   -- * Atlassian Connect Add-on Descriptor
+     Plugin(..)
    , pluginDescriptor
+   -- * Basic Types
    , Name(..)
    , Key(..)
    , PluginKey(..)
    , Timeout(..)
-   , Vendor(..)
+   -- * Authentication
    , Authentication(..)
    , AuthType(..)
+   -- * Vendor Details
+   , Vendor(..)
+   -- * Lifecycle
+   , Lifecycle(..)
+   , emptyLifecycle
+   , defaultLifecycle
+   -- * Add-on Modules
+   , Modules(..)
+   , JiraModules(..)
+   , emptyJiraModules
+   , ConfluenceModules(..)
+   , emptyConfluenceModules
+   , WebPanel(..)
+   , GeneralPage(..)
+   -- ** Webhooks
+   , Webhook(..)
+   , WebhookEvent(..)
+   -- * Module Conditions
+   , Condition(..)
+   , ConditionType(..)
+   , ConditionSource(..)
+   , remoteCondition
+   , JIRACondition(..)
+   , staticJiraCondition
+   , ConfluenceCondition(..)
+   , staticConfluenceCondition
+   , invertCondition
+   -- * Scopes (Permissions)
+   , ProductScope(..)
    ) where
 
 import           Control.Monad

@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 module Data.Connect.Lifecycle
     ( Lifecycle(..)
+    , emptyLifecycle
     , defaultLifecycle
     ) where
 
@@ -20,6 +21,9 @@ data Lifecycle = Lifecycle
 
 instance ToJSON Lifecycle where
    toJSON = genericToJSON baseOptions
+
+emptyLifecycle :: Lifecycle
+emptyLifecycle = Lifecycle Nothing Nothing Nothing Nothing
 
 defaultLifecycle :: Lifecycle
 defaultLifecycle = Lifecycle
