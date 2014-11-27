@@ -6,9 +6,8 @@ module Data.Connect.Lifecycle
     ) where
 
 import           Data.Aeson
-import           Data.Aeson.Types
 import           Data.Connect.AesonHelpers
-import           Data.Connect.OrphanInstances
+import           Data.Connect.OrphanInstances ()
 import           GHC.Generics
 import qualified Network.URI                  as NU
 

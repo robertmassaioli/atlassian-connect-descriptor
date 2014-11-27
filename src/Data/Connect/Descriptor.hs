@@ -70,7 +70,6 @@ module Data.Connect.Descriptor (
    , ProductScope(..)
    ) where
 
-import           Control.Monad
 import           Data.Aeson
 import           Data.Aeson.Types
 import           Data.Connect.AesonHelpers
@@ -81,7 +80,6 @@ import           Data.Connect.Modules
 import           Data.Connect.Scopes
 import           Data.Connect.Webhooks
 import           Data.Text
-import           Data.Time.Units
 import           GHC.Generics
 import           Network.URI
 

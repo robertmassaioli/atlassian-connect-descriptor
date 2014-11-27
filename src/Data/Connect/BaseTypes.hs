@@ -7,7 +7,7 @@ module Data.Connect.BaseTypes where
 import           Data.Aeson
 import           Data.Aeson.Types
 import           Data.Connect.AesonHelpers
-import           Data.Connect.OrphanInstances
+import           Data.Connect.OrphanInstances ()
 import           Data.Text
 import qualified Data.Time.Units              as DTU
 import           GHC.Generics

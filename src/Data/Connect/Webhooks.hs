@@ -8,13 +8,20 @@ module Data.Connect.Webhooks
 import           Data.Aeson
 import           Data.Aeson.Types
 import           Data.Connect.AesonHelpers
-import           Data.Connect.BaseTypes
-import qualified Data.Text                 as T
+import           Data.Connect.OrphanInstances ()
 import           GHC.Generics
+import qualified Network.URI                  as NU
 
+-- | When users of the host application perform updates your Atlassian Connect add-on will not be alerted /unless/
+-- it listens to the 'WebhookEvent's coming from that application. Webhooks are the way to close the issue recency loop
+-- in the Atlassian products. It is important to note that Webhooks are 'best effort' and that there is no guarantee
+-- that the webhook will make it to your Atlassian Connect application.
+--
+-- The Atlassian connect webhook documentation explains this in more detail:
+-- <https://developer.atlassian.com/static/connect/docs/modules/jira/webhook.html>
 data Webhook = Webhook
-   { webhookEvent :: WebhookEvent
-   , webhookUrl   :: T.Text
+   { webhookEvent :: WebhookEvent -- ^ The event that you want your Atlassian Connect add-on to watch.
+   , webhookUrl   :: NU.URI -- ^ The relative URI that you wish to handle the webhook response.
    } deriving (Show, Generic)
 
 instance ToJSON Webhook where
@@ -22,6 +29,7 @@ instance ToJSON Webhook where
       { fieldLabelModifier = stripFieldNamePrefix "webhook"
       }
 
+-- | The webhook event that you wish to watch from your Atlassian Connect add-on.
 data WebhookEvent
    = ConnectAddonDisabled
    | ConnectAddonEnabled
@@ -34,6 +42,52 @@ data WebhookEvent
    | JiraPluginsUpgraded
    | JiraRemoteIssueLinkAggregateClearedEvent
    | JiraRemoteWorkflowPostFunction
+   | ConfluenceAttachmentCreated
+   | ConfluenceAttachmentRemoved
+   | ConfluenceAttachmentUpdated
+   | ConfluenceAttachmentViewed
+   | ConfluenceBlogCreated
+   | ConfluenceBlogRemoved
+   | ConfluenceBlogRestored
+   | ConfluenceBlogTrashed
+   | ConfluenceBlogUpdated
+   | ConfluenceBlogViewed
+   | ConfluenceCacheStatisticsChanged
+   | ConfluenceCommentCreated
+   | ConfluenceCommentRemoved
+   | ConfluenceCommentUpdated
+   | ConfluenceContentPermissionsUpdated
+   | ConfluenceLabelAdded
+   | ConfluenceLabelCreated
+   | ConfluenceLabelDeleted
+   | ConfluenceLabelRemoved
+   | ConfluenceLogin
+   | ConfluenceLoginFailed
+   | ConfluenceLogout
+   | ConfluencePageChildrenReordered
+   | ConfluencePageCreated
+   | ConfluencePageMoved
+   | ConfluencePageRemoved
+   | ConfluencePageRestored
+   | ConfluencePageTrashed
+   | ConfluencePageUpdated
+   | ConfluencePageViewed
+   | ConfluenceSearchPerformed
+   | ConfluenceSpaceCreated
+   | ConfluenceSpaceLogoUpdated
+   | ConfluenceSpacePermissionsUpdated
+   | ConfluenceSpaceRemoved
+   | ConfluenceSpaceUpdated
+   | ConfluenceStatusCleared
+   | ConfluenceStatusCreated
+   | ConfluenceStatusRemoved
+   | ConfluenceUserCreated
+   | ConfluenceUserDeactivated
+   | ConfluenceUserFollowed
+   | ConfluenceUserReactivated
+   | ConfluenceUserRemoved
+   | ConfluenceGroupCreated
+   | ConfluenceGroupRemoved
    | ServerUpgraded
    deriving (Show)
 
@@ -49,6 +103,50 @@ instance ToJSON WebhookEvent where
    toJSON JiraPluginsUpgraded = String "plugins_upgraded"
    toJSON JiraRemoteIssueLinkAggregateClearedEvent = String "remote_issue_link_aggregate_cleared_event"
    toJSON JiraRemoteWorkflowPostFunction = String "remote_workflow_post_function"
+   toJSON ConfluenceAttachmentCreated = "attachment_created"
+   toJSON ConfluenceAttachmentRemoved = "attachment_removed"
+   toJSON ConfluenceAttachmentUpdated = "attachment_updated"
+   toJSON ConfluenceAttachmentViewed = "attachment_viewed"
+   toJSON ConfluenceBlogCreated = "blog_created"
+   toJSON ConfluenceBlogRemoved = "blog_removed"
+   toJSON ConfluenceBlogRestored = "blog_restored"
+   toJSON ConfluenceBlogTrashed = "blog_trashed"
+   toJSON ConfluenceBlogUpdated = "blog_updated"
+   toJSON ConfluenceBlogViewed = "blog_viewed"
+   toJSON ConfluenceCacheStatisticsChanged = "cache_statistics_changed"
+   toJSON ConfluenceCommentCreated = "comment_created"
+   toJSON ConfluenceCommentRemoved = "comment_removed"
+   toJSON ConfluenceCommentUpdated = "comment_updated"
+   toJSON ConfluenceContentPermissionsUpdated = "content_permissions_updated"
+   toJSON ConfluenceLabelAdded = "label_added"
+   toJSON ConfluenceLabelCreated = "label_created"
+   toJSON ConfluenceLabelDeleted = "label_deleted"
+   toJSON ConfluenceLabelRemoved = "label_removed"
+   toJSON ConfluenceLogin = "login"
+   toJSON ConfluenceLoginFailed = "login_failed"
+   toJSON ConfluenceLogout = "logout"
+   toJSON ConfluencePageChildrenReordered = "page_children_reordered"
+   toJSON ConfluencePageCreated = "page_created"
+   toJSON ConfluencePageMoved = "page_moved"
+   toJSON ConfluencePageRemoved = "page_removed"
+   toJSON ConfluencePageRestored = "page_restored"
+   toJSON ConfluencePageTrashed = "page_trashed"
+   toJSON ConfluencePageUpdated = "page_updated"
+   toJSON ConfluencePageViewed = "page_viewed"
+   toJSON ConfluenceSearchPerformed = "search_performed"
+   toJSON ConfluenceSpaceCreated = "space_created"
+   toJSON ConfluenceSpaceLogoUpdated = "space_logo_updated"
+   toJSON ConfluenceSpacePermissionsUpdated = "space_permissions_updated"
+   toJSON ConfluenceSpaceRemoved = "space_removed"
+   toJSON ConfluenceSpaceUpdated = "space_updated"
+   toJSON ConfluenceStatusCleared = "status_cleared"
+   toJSON ConfluenceStatusCreated = "status_created"
+   toJSON ConfluenceStatusRemoved = "status_removed"
+   toJSON ConfluenceUserCreated = "user_created"
+   toJSON ConfluenceUserDeactivated = "user_deactivated"
+   toJSON ConfluenceUserFollowed = "user_followed"
+   toJSON ConfluenceUserReactivated = "user_reactivated"
+   toJSON ConfluenceUserRemoved = "user_removed"
+   toJSON ConfluenceGroupCreated = "group_created"
+   toJSON ConfluenceGroupRemoved = "group_removed"
    toJSON ServerUpgraded = String "server_upgraded"
-
--- TODO add the confluence webhook events
