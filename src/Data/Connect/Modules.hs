@@ -19,7 +19,6 @@ import           Data.Connect.Webhooks
 import qualified Data.HashMap.Strict       as HM
 import qualified Data.Text                 as T
 import           GHC.Generics
-import qualified Network.URI               as NU
 
 -- | 'Modules' are perhaps the most important part of your Atlassian Connect descriptor. They specify which parts of the
 -- host application you wish to inject content into. They provide your entry point into the host application.
@@ -98,7 +97,7 @@ emptyConfluenceModules = ConfluenceModules []
 data WebPanel = WebPanel
    { wpKey        :: T.Text -- ^ The add-on unique key for this module.
    , wpName       :: Name WebPanel -- ^ The name of this panel, likely to appear in the User Interface.
-   , wpUrl        :: NU.URI -- ^ The relative URI that the host product will hit to get HTML content.
+   , wpUrl        :: T.Text -- ^ The relative URI that the host product will hit to get HTML content.
    , wpLocation   :: T.Text -- ^ The location that this content should be injected in the host product.
    , wpConditions :: [Condition] -- ^ The 'Condition's that need to be met for this module to be displayed.
    } deriving (Show, Generic)
@@ -122,7 +121,7 @@ instance ToJSON WebPanel where
 data GeneralPage = GeneralPage
    { generalPageKey        :: T.Text -- ^ The add-on unique key for this module.
    , generalPageName       :: Name GeneralPage -- ^ The name of this General Page. Likely to be used in the page title.
-   , generalPageUrl        :: NU.URI -- ^ The relative URI that the host product will hit to get the HTML content for the page.
+   , generalPageUrl        :: T.Text -- ^ The relative URI that the host product will hit to get the HTML content for the page.
    , generalPageLocation   :: Maybe T.Text -- ^ The location for this General Page to display; see the docs for your options.
    , generalPageIcon       :: Maybe IconDetails -- ^ The optional icon to use for this general page.
    , generalPageWeight     :: Maybe Integer -- ^ Determines the order that this item appears in any menu or list.

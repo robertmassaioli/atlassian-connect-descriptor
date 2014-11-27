@@ -16,7 +16,6 @@ import           Data.Aeson
 import           Data.Connect.AesonHelpers
 import           Data.Connect.OrphanInstances ()
 import           GHC.Generics
-import qualified Network.URI                  as NU
 
 -- | A 'Condition' can be placed on an Atlassian Connect Module to cause it to display or not based on the result it
 -- returns. For example, you can choose not to show a WebPanel if the user viewing the page is not logged in. Conditions
@@ -48,7 +47,7 @@ staticConfluenceCondition :: ConfluenceCondition -> Condition
 staticConfluenceCondition c = SingleCondition { conditionSource = StaticConfluenceCondition c, conditionInverted = False }
 
 -- | Given a URI that defines a remote condition convert it into a regular 'Condition'.
-remoteCondition :: NU.URI -> Condition
+remoteCondition :: String -> Condition
 remoteCondition conditionLocation = SingleCondition { conditionSource = RemoteCondition conditionLocation, conditionInverted = False }
 
 -- | Invert the given condition.
@@ -88,7 +87,7 @@ data ConditionSource
    | StaticConfluenceCondition  ConfluenceCondition
    -- | A remote condition defined by your Atlassian Connect application.
    | RemoteCondition
-      { remoteConditionPath :: NU.URI -- ^ The relative URI that you should hit in your Atlassian Connect application to
+      { remoteConditionPath :: String -- ^ The relative URI that you should hit in your Atlassian Connect application to
                                       -- get the condition result. This URI, when hit, should return a JSON response in
                                       -- the format:
                                       --

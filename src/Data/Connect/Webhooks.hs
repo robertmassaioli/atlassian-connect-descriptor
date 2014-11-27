@@ -9,8 +9,8 @@ import           Data.Aeson
 import           Data.Aeson.Types
 import           Data.Connect.AesonHelpers
 import           Data.Connect.OrphanInstances ()
+import qualified Data.Text                    as T
 import           GHC.Generics
-import qualified Network.URI                  as NU
 
 -- | When users of the host application perform updates your Atlassian Connect add-on will not be alerted /unless/
 -- it listens to the 'WebhookEvent's coming from that application. Webhooks are the way to close the issue recency loop
@@ -21,7 +21,7 @@ import qualified Network.URI                  as NU
 -- <https://developer.atlassian.com/static/connect/docs/modules/jira/webhook.html>
 data Webhook = Webhook
    { webhookEvent :: WebhookEvent -- ^ The event that you want your Atlassian Connect add-on to watch.
-   , webhookUrl   :: NU.URI -- ^ The relative URI that you wish to handle the webhook response.
+   , webhookUrl   :: T.Text -- ^ The relative URI that you wish to handle the webhook response.
    } deriving (Show, Generic)
 
 instance ToJSON Webhook where
