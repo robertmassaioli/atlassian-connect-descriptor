@@ -129,7 +129,7 @@ instance ToJSON Plugin where
 -- | A helper method to generate a bare-bones Atlassian Connect add-on by providing only the absolutely required fields.
 -- You can then use Haskell record syntax to update the plugin with more details. For example:
 --
--- > (pluginDescriptor (PluginKey . pack $ "com.company.mycoolplugin") (fromJust . parseURI $ "http://mycoolplugin.company.com") (Authentication Jwt Nothing))
+-- > (pluginDescriptor (PluginKey . pack $ "com.company.mycoolplugin") (fromJust . parseURI $ "http://mycoolplugin.company.com") (Authentication Jwt))
 -- >    { pluginName = Just . Name . pack $ "My Cool Plugin"
 -- >    , pluginDescription = Just . pack $ "Chil and be cool, you have a plugin descriptor."
 -- >    }
