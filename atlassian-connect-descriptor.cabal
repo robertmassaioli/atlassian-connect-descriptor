@@ -92,6 +92,7 @@ Test-Suite test-descriptor
 
   test-module: Test
   other-modules: Util
+                 , ValueExtractors
                  , ConditionsTest
                  , Data.Connect.Descriptor
                  , Data.Connect.AesonHelpers
@@ -107,7 +108,7 @@ Test-Suite test-descriptor
     base
     , Cabal >= 1.20
     , HUnit
-    , atlassian-connect-descriptor
+    , vector
     , aeson
     , text
     , time-units
