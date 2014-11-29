@@ -86,7 +86,7 @@ emptyConfluenceModules = ConfluenceModules []
 -- > helloWorldWebPanel = WebPanel
 -- >    { wpKey = "hello-world"
 -- >    , wpName = Name "Hello world!"
--- >    , wpUrl = toURI "/panel/show-hello-world"
+-- >    , wpUrl = "/panel/show-hello-world"
 -- >    , wpLocation = "atl.jira.view.issue.right.context"
 -- >    , wpConditions = [staticJiraCondition UserIsLoggedInJiraCondition]
 -- >    }

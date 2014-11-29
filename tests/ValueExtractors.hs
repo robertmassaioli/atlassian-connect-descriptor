@@ -14,16 +14,28 @@ get key _ = fail $ "The value was not an object when looking for: " ++ T.unpack 
 
 getArray :: Value -> IO [Value]
 getArray (Array v) = return . V.toList $ v
-getArray _ = fail "Value is not an array."
+getArray v = fail $ "Value is not an array. It is a: " ++ valueAsString v
 
 getString :: Value -> IO T.Text
 getString (String s) = return s
-getString _ = fail "Value is not a string value."
+getString v = fail $ "Value is not a string value. It is a: " ++ valueAsString v
 
 getBool :: Value -> IO Bool
 getBool (Bool b) = return b
-getBool _ = fail "Value is not a boolean."
+getBool v = fail $ "Value is not a boolean. It is a: " ++ valueAsString v
 
 isObject :: Value -> Bool
 isObject (Object _) = True
 isObject _ = False
+
+isArray :: Value -> Bool
+isArray (Array _) = True
+isArray _ = False
+
+valueAsString :: Value -> String
+valueAsString (Object _) = "Object"
+valueAsString (Array _) = "Array"
+valueAsString (Bool _) = "Bool"
+valueAsString (String _) = "String"
+valueAsString (Number _) = "Number"
+valueAsString Null = "Null"

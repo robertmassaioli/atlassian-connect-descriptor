@@ -94,6 +94,7 @@ Test-Suite test-descriptor
   other-modules: Util
                  , ValueExtractors
                  , ConditionsTest
+                 , ModulesTest
                  , Data.Connect.Descriptor
                  , Data.Connect.AesonHelpers
                  , Data.Connect.BaseTypes
