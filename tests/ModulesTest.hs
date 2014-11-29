@@ -1,7 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 module ModulesTest (moduleTests) where
 
-import Control.Applicative
+import           AssertionHelpers
+import           Control.Applicative
 import           Data.Aeson
 import           Data.Connect.BaseTypes
 import           Data.Connect.Conditions (JIRACondition (..),
@@ -33,11 +34,26 @@ testWebPanelCorrectFormat = TestCase $ do
     (getString =<< get "location" jv) `isEqualTo` "atl.jira.view.issue.right.context"
     (isArray <$> get "conditions" jv) @? "Expected the conditions to be an array"
 
-isEqualTo :: (Eq a, Show a) => IO a -> a -> Assertion
-isEqualTo actual expected = do
-    value <- actual
-    value @?= expected
-
 testGeneralPageCorrectFormat :: Test
 testGeneralPageCorrectFormat = TestCase $ do
-    return ()
+    let gp = GeneralPage
+              { generalPageKey = "general-page-key"
+              , generalPageName = Name "General Page Name"
+              , generalPageUrl = "/panel/page-panel-name?page_id={page.id}"
+              , generalPageLocation = Just "some-confluence-location"
+              , generalPageIcon = Just $ IconDetails "/path/to/icon" (Just 10) (Just 20)
+              , generalPageWeight = Just 10000
+              , generalPageConditions = [staticJiraCondition IsIssueReportedByCurrentUserJiraCondition]
+              }
+    let jv = toJSON gp
+    isObject jv @? "Expected the web panel to be an object"
+    get "key" jv `isEqualTo` "general-page-key"
+    (get "value" =<< get "name" jv) `isEqualTo` "General Page Name"
+    get "url" jv `isEqualTo` "/panel/page-panel-name?page_id={page.id}"
+    get "location" jv `isEqualTo` "some-confluence-location"
+    (isObject <$> get "icon" jv) @? "Expected an icon to be present"
+    (get "url" =<< get "icon" jv) `isEqualTo` "/path/to/icon"
+    (getNumber =<< get "width" =<< get "icon" jv) `isEqualTo` 10
+    (getNumber =<< get "height" =<< get "icon" jv) `isEqualTo` 20
+    (getNumber =<< get "weight" jv) `isEqualTo` 10000
+    (isArray <$> get "conditions" jv) @? "Expected the conditions to be present."

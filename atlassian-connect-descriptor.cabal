@@ -92,6 +92,7 @@ Test-Suite test-descriptor
 
   test-module: Test
   other-modules: Util
+                 , AssertionHelpers
                  , ValueExtractors
                  , ConditionsTest
                  , ModulesTest
@@ -111,6 +112,7 @@ Test-Suite test-descriptor
     , HUnit
     , vector
     , aeson
+    , scientific
     , text
     , time-units
     , cases

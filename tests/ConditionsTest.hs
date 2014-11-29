@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module ConditionsTest (conditionsTests) where
 
+import           AssertionHelpers
 import           Control.Monad
 import           Data.Aeson
 import           Data.Connect.Conditions
@@ -63,10 +64,8 @@ jiraConditionJsonCorrect = TestCase $ do
     let condition = staticJiraCondition UserIsAdminJiraCondition
     let jsonValue = toJSON condition
     isObject jsonValue @? "Expect the result to be an object"
-    conditionString <- getString =<< get "condition" jsonValue
-    conditionString @?= T.pack "user_is_admin"
-    isInverted <- getBool =<< get "invert" jsonValue
-    isInverted @?= False
+    (getString =<< get "condition" jsonValue) `isEqualTo` "user_is_admin"
+    (return . not =<< getBool =<< get "invert" jsonValue) @? "Expected the condition to not be inverted"
 
 -- Confluence Conditions come out correctly
 confluenceConditionJsonCorrect :: Test
@@ -74,10 +73,8 @@ confluenceConditionJsonCorrect = TestCase $ do
     let condition = invertCondition $ staticConfluenceCondition HasAttachmentConfluenceCondition
     let jsonValue = toJSON condition
     isObject jsonValue @? "Expect the result to be an object"
-    conditionString <- getString =<< get "condition" jsonValue
-    conditionString @?= T.pack "has_attachment"
-    isInverted <- getBool =<< get "invert" jsonValue
-    isInverted @?= True
+    (getString =<< get "condition" jsonValue) `isEqualTo` "has_attachment"
+    (getBool =<< get "invert" jsonValue) @? "Expect the condition to be inverted"
 
 -- Remote conditions come out correctly
 remoteConditionJsonCorrect :: Test
@@ -86,10 +83,8 @@ remoteConditionJsonCorrect = TestCase $ do
     let condition = invertCondition $ remoteCondition remoteUrl
     let jsonValue = toJSON condition
     isObject jsonValue @? "Expect the remote condition to come out as an object."
-    conditionString <- getString =<< get "condition" jsonValue
-    conditionString @?= T.pack remoteUrl
-    isInverted <- getBool =<< get "invert" jsonValue
-    isInverted @?= True
+    (getString =<< get "condition" jsonValue) `isEqualTo` T.pack remoteUrl
+    (getBool =<< get "invert" jsonValue) @? "Expect the condition to be inverted"
 
 -- CompositeCondition's are rendered correctly
 compositeAndConditionConnect :: Test
@@ -98,7 +93,5 @@ compositeAndConditionConnect = TestCase $ do
     let jsonValue = toJSON condition
     isObject jsonValue @? "Expect the conditions in an object."
     conditions <- getArray =<< get "conditions" jsonValue
-    conditionValues <- sequence $ fmap (getString <=< get "condition") conditions
-    conditionValues @?= ["user_has_issue_history","is_watching_issue","has_voted_for_issue"]
-    ct <- get "type" jsonValue
-    ct @?= "AND"
+    sequence (fmap (getString <=< get "condition") conditions) `isEqualTo` ["user_has_issue_history","is_watching_issue","has_voted_for_issue"]
+    get "type" jsonValue `isEqualTo` "AND"

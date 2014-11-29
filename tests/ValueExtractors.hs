@@ -2,9 +2,9 @@ module ValueExtractors where
 
 import           Data.Aeson
 import qualified Data.HashMap.Strict as M
-import           Data.Maybe          (maybe)
+import qualified Data.Scientific     as S
 import qualified Data.Text           as T
-import qualified Data.Vector as V
+import qualified Data.Vector         as V
 
 get :: T.Text -> Value -> IO Value
 get key (Object o) = maybe notFound return $ M.lookup key o
@@ -31,6 +31,10 @@ isObject _ = False
 isArray :: Value -> Bool
 isArray (Array _) = True
 isArray _ = False
+
+getNumber :: Value -> IO S.Scientific
+getNumber (Number n) = return n
+getNumber v = fail $ "Value is not a number. It is a: " ++ valueAsString v
 
 valueAsString :: Value -> String
 valueAsString (Object _) = "Object"
