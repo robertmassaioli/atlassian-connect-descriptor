@@ -96,6 +96,7 @@ Test-Suite test-descriptor
                  , ValueExtractors
                  , ConditionsTest
                  , ModulesTest
+                 , DescriptorTest
                  , Data.Connect.Descriptor
                  , Data.Connect.AesonHelpers
                  , Data.Connect.BaseTypes

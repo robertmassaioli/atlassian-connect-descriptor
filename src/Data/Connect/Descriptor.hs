@@ -36,6 +36,7 @@ module Data.Connect.Descriptor (
    , Key(..)
    , PluginKey(..)
    , Timeout(..)
+   , IconDetails(..)
    -- * Authentication
    , Authentication(..)
    , AuthType(..)
@@ -79,6 +80,7 @@ import           Data.Connect.Lifecycle
 import           Data.Connect.Modules
 import           Data.Connect.Scopes
 import           Data.Connect.Webhooks
+import qualified Data.HashMap.Strict       as HM
 import           Data.Text
 import           GHC.Generics
 import           Network.URI
@@ -113,7 +115,7 @@ data Plugin = Plugin
    , modules           :: Maybe Modules -- ^ The modules that your Atlassian Connect add-on provides to the Cloud application. Look at the 'Modules' documentaiton for more information.
    , apiVersion        :: Maybe Text -- ^ Required if you wish to provide new versions of your addon to a subset of beta customers.
    , enableLicensing   :: Maybe Bool -- ^ If you are giving away a free add-on then you can set this to false, otherwise set it to true.
-   , links             :: Maybe [(Text, URI)] -- ^ A collection of custom links that you wish to publish with your add-on. Like documentation or bug-tracking links.
+   , links             :: HM.HashMap Text URI -- ^ A collection of custom links that you wish to publish with your add-on. Like documentation or bug-tracking links.
    , scopes            :: Maybe [ProductScope] -- ^ The scopes that your add-on requires. See 'ProductScope' for more information.
    } deriving (Show, Generic)
 
@@ -147,6 +149,6 @@ pluginDescriptor key' url' auth = Plugin
    , modules = Nothing
    , enableLicensing = Nothing
    , lifecycle = Nothing
-   , links = Nothing
+   , links = HM.empty
    , scopes = Nothing
    }
