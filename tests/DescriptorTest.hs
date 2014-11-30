@@ -78,7 +78,6 @@ descriptorTests = TestList
 basicDescriptorTest :: Test
 basicDescriptorTest = TestCase $ do
     let jv = toJSON exampleDescriptor1
-    print . encode $ jv
     isObject jv @? "Expect the descriptor to be one big json object."
     (getString =<< get "key" jv) `isEqualTo` "my-example-connect"
     (getString =<< get "baseUrl" jv) `isEqualTo` (T.pack . show $ baseURL)

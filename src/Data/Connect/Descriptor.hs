@@ -17,11 +17,63 @@ Atlassian Connect is a framework for writing Add-on's that can run inside the At
 information from the Atlassian Connect documentation <https://developer.atlassian.com/static/connect/docs/guides/introduction.html>.
 
 The plugin descriptor is defined by the 'Plugin' class. The end result of using this Haskell Module should be for you to
-end up with a valid 'Plugin'. For example, here in an example Atlassian Connect Descriptor:
+end up with a valid 'Plugin'. To turn your plugin into JSON that the Atlassian marketplace can accept just use the 'encode'
+function from the Aeson library. For example, here in an example Atlassian Connect Descriptor:
 
-@
-TODO provide an example plugin descriptor.
-@
+> pluginToJsonString :: Plugin -> ByteString
+> pluginToJsonString = encode
+>
+> exampleDescriptor :: Plugin
+> exampleDescriptor = (pluginDescriptor (PluginKey "my-example-connect") baseURL (Authentication Jwt))
+>     { pluginName = Just . Name $ "My Example Connect Addon"
+>     , pluginDescription = Just "This is an example connect descriptor."
+>     , vendor = Just $ Vendor (Name "Awesome Devs") (toURI "http://awesome-devs.com")
+>     , lifecycle = Just defaultLifecycle
+>     , modules = Just exampleModules
+>     , enableLicensing = Just False
+>     , links = fromList
+>         [ ("documentation", toURI "http://awesome-devs.com/docs")
+>         , ("source", toURI "http://bitbucket.org/awesome-devs/connect-addon")
+>         ]
+>     , scopes = Just [Read, Admin]
+>     }
+>
+> exampleModules :: Modules
+> exampleModules = Modules exampleJIRAModules emptyConfluenceModules
+>
+> exampleJIRAModules :: JIRAModules
+> exampleJIRAModules = emptyJIRAModules
+>     { jiraWebPanels =
+>         [ WebPanel
+>             { wpKey = "test-web-panel"
+>             , wpName = Name "Test Web Panel"
+>             , wpLocation = "some-location-in-jira"
+>             , wpUrl = "/panel/location/for"
+>             , wpConditions = [staticJiraCondition UserIsAdminJiraCondition]
+>             }
+>         ]
+>     , jiraGeneralPages =
+>         [ GeneralPage
+>             { generalPageKey = "test-general-page"
+>             , generalPageName = Name "Test General Page"
+>             , generalPageLocation = Just "some-other-location-in-jira"
+>             , generalPageWeight = Just 1234
+>             , generalPageUrl = "/panel/general-page"
+>             , generalPageIcon = Just IconDetails
+>                 { iconUrl = "/static/path/to/icon.png"
+>                 , iconWidth = Just 20
+>                 , iconHeight = Just 40
+>                 }
+>             , generalPageConditions = [staticJiraCondition UserHasIssueHistoryJiraCondition]
+>             }
+>         ]
+>     , jiraWebhooks =
+>         [ Webhook
+>             { webhookEvent = JiraIssueDeleted
+>             , webhookUrl = "/webhook/handle-deletion"
+>             }
+>         ]
+>     }
 
 You can use this library to make your own. This library will experience change whenever the Atlassian Connect descriptor
 changes. There are likely to be many breaking changes but we will keep track of them using the standard Haskell version
