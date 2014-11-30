@@ -16,7 +16,8 @@ version:             0.1.0.0
 synopsis:            Code that helps you create a valid Atlassian Connect Descriptor.
 
 -- A longer description of the package.
--- description:         
+description:         Allows you to generate an Atlassian Connect Descriptor in a typesafe manner and easily convert it
+                     it into JSON using the fantastic Aeson library.
 
 -- The license under which the package is released.
 license:             Apache-2.0
@@ -40,7 +41,7 @@ build-type:          Simple
 
 -- Extra files to be distributed with the package, such as examples or a 
 -- README.
--- extra-source-files:  
+extra-source-files:  README.markdown
 
 -- Constraint on the version of Cabal needed to build this package.
 cabal-version:       >=1.20
