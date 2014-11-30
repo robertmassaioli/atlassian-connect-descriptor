@@ -8,6 +8,7 @@ import           Data.Connect.Conditions
 import qualified Data.Text               as T
 import           Test.HUnit
 import           ValueExtractors
+import qualified Data.HashMap.Strict as HM
 
 conditionsTests :: Test
 conditionsTests = TestList
@@ -19,6 +20,7 @@ conditionsTests = TestList
     , confluenceConditionJsonCorrect
     , remoteConditionJsonCorrect
     , compositeAndConditionConnect
+    , conditionParamsTest
     ]
 
 -- Inverting conditions works correctly
@@ -95,3 +97,11 @@ compositeAndConditionConnect = TestCase $ do
     conditions <- getArray =<< get "conditions" jsonValue
     sequence (fmap (getString <=< get "condition") conditions) `isEqualTo` ["user_has_issue_history","is_watching_issue","has_voted_for_issue"]
     get "type" jsonValue `isEqualTo` "AND"
+
+conditionParamsTest :: Test
+conditionParamsTest = TestCase $ do
+    let condition = staticJiraCondition UserIsAdminJiraCondition
+    let conditionWithParams = condition { conditionParams = HM.fromList [("param-one", "value-one"), ("param-two", "value-two")] }
+    let jv = toJSON conditionWithParams
+    (getString =<< get "param-one" =<< get "params" jv) `isEqualTo` "value-one"
+    (getString =<< get "param-two" =<< get "params" jv) `isEqualTo` "value-two"

@@ -16,6 +16,7 @@ import           Data.Aeson
 import           Data.Connect.AesonHelpers
 import           Data.Connect.OrphanInstances ()
 import           GHC.Generics
+import qualified Data.HashMap.Strict as HM
 
 -- | A 'Condition' can be placed on an Atlassian Connect Module to cause it to display or not based on the result it
 -- returns. For example, you can choose not to show a WebPanel if the user viewing the page is not logged in. Conditions
@@ -28,7 +29,7 @@ data Condition
    = SingleCondition
    { conditionSource   :: ConditionSource -- ^ The source of this condition.
    , conditionInverted :: Bool -- ^ If you should invert the condition. For example, only show if user is NOT logged in.
-   -- , conditionParams    :: [(String, String)] -- TODO impliment properly but not required yet
+   , conditionParams :: HM.HashMap String String -- ^ Extra parameters to pass with the condition to give it context.
    }
    -- | A condition that is the composition of one or more conditions. The 'ConditionType' decides the way in which the
    -- conditions are composed
@@ -40,15 +41,15 @@ data Condition
 
 -- | Turn a standard JIRA Condition into a regular 'Condition'.
 staticJiraCondition :: JIRACondition -> Condition
-staticJiraCondition c = SingleCondition { conditionSource = StaticJIRACondition c, conditionInverted = False }
+staticJiraCondition c = SingleCondition { conditionSource = StaticJIRACondition c, conditionInverted = False, conditionParams = HM.empty }
 
 -- | Turn a standard Confluence Condition into a regular 'Condition'.
 staticConfluenceCondition :: ConfluenceCondition -> Condition
-staticConfluenceCondition c = SingleCondition { conditionSource = StaticConfluenceCondition c, conditionInverted = False }
+staticConfluenceCondition c = SingleCondition { conditionSource = StaticConfluenceCondition c, conditionInverted = False, conditionParams = HM.empty }
 
 -- | Given a URI that defines a remote condition convert it into a regular 'Condition'.
 remoteCondition :: String -> Condition
-remoteCondition conditionLocation = SingleCondition { conditionSource = RemoteCondition conditionLocation, conditionInverted = False }
+remoteCondition conditionLocation = SingleCondition { conditionSource = RemoteCondition conditionLocation, conditionInverted = False, conditionParams = HM.empty }
 
 -- | Invert the given condition.
 invertCondition :: Condition -> Condition
@@ -64,6 +65,7 @@ instance ToJSON Condition where
    toJSON sc@(SingleCondition {}) = object
       [ "condition" .= conditionSource sc
       , "invert" .= conditionInverted sc
+      , "params" .= conditionParams sc
       ]
    toJSON cc@(CompositeCondition {}) = object [ "conditions" .= subConditions cc, "type" .= conditionType cc]
 
