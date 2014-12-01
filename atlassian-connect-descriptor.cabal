@@ -69,7 +69,7 @@ library
   
   -- Other library packages from which modules are imported.
   build-depends:       base         >=4.6 && <5
-                       , aeson      >  0.7.0.3 && < 0.8
+                       , aeson      >  0.7.0.3 && < 0.9
                        , text       >= 0.11    && <= 1.2
                        , time-units == 1.*
                        , cases      == 0.1.*
