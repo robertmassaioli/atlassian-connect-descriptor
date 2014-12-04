@@ -1,7 +1,9 @@
 module ValueExtractors where
 
+import           Control.Applicative
 import           Data.Aeson
 import qualified Data.HashMap.Strict as M
+import           Data.Maybe          (isJust)
 import qualified Data.Scientific     as S
 import qualified Data.Text           as T
 import qualified Data.Vector         as V
@@ -11,6 +13,13 @@ get key (Object o) = maybe notFound return $ M.lookup key o
     where
         notFound = fail $ "Could not find a value in object with key: " ++ T.unpack key
 get key _ = fail $ "The value was not an object when looking for: " ++ T.unpack key
+
+fieldIsPresent :: T.Text -> Value -> IO Bool
+fieldIsPresent key (Object o) = return . isJust $ M.lookup key o
+fieldIsPresent key _ = fail $ "The value was not an object when looking for: " ++ T.unpack key
+
+fieldIsNotPresent :: T.Text -> Value -> IO Bool
+fieldIsNotPresent key value = not <$> fieldIsPresent key value
 
 getArray :: Value -> IO [Value]
 getArray (Array v) = return . V.toList $ v

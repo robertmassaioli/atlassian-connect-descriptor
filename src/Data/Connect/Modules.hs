@@ -56,6 +56,8 @@ data JIRAModules = JIRAModules
 
 instance ToJSON JIRAModules where
    toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "jira"
+      }
 
 -- | A collection of all of the Confluence Modules that you can define. For more documentation on which Modules are supported
 -- the Atlassian Connect framework please see 'Modules'. You can also find more documentation on each of the modules.
@@ -65,6 +67,8 @@ data ConfluenceModules = ConfluenceModules
 
 instance ToJSON ConfluenceModules where
    toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "confluence"
+      }
 
 -- | Empty JIRA Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyJIRAModules :: JIRAModules
