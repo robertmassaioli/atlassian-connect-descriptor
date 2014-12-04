@@ -7,7 +7,9 @@ module Data.Connect.Modules
    , ConfluenceModules(..)
    , emptyConfluenceModules
    , WebPanel(..)
+   , WebPanelLayout(..)
    , GeneralPage(..)
+   , JIRAProjectAdminTabPanel(..)
    ) where
 
 import           Data.Aeson
@@ -49,9 +51,10 @@ instance ToJSON Modules where
 -- | A collection of all of the JIRA Modules that you can define. For more documentation on which Modules are supported
 -- the Atlassian Connect framework please see 'Modules'. You can also find more documentation on each of the modules.
 data JIRAModules = JIRAModules
-   { jiraWebPanels    :: [WebPanel]
-   , jiraGeneralPages :: [GeneralPage]
-   , jiraWebhooks     :: [Webhook]
+   { jiraWebPanels                 :: [WebPanel]
+   , jiraGeneralPages              :: [GeneralPage]
+   , jiraWebhooks                  :: [Webhook]
+   , jiraJiraProjectAdminTabPanels :: [JIRAProjectAdminTabPanel]
    } deriving (Show, Generic)
 
 instance ToJSON JIRAModules where
@@ -72,7 +75,7 @@ instance ToJSON ConfluenceModules where
 
 -- | Empty JIRA Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyJIRAModules :: JIRAModules
-emptyJIRAModules = JIRAModules [] [] []
+emptyJIRAModules = JIRAModules [] [] [] []
 
 -- | Empty Confluence Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyConfluenceModules :: ConfluenceModules
@@ -104,12 +107,61 @@ data WebPanel = WebPanel
    , wpUrl        :: T.Text -- ^ The relative URI that the host product will hit to get HTML content.
    , wpLocation   :: T.Text -- ^ The location that this content should be injected in the host product.
    , wpConditions :: [Condition] -- ^ The 'Condition's that need to be met for this module to be displayed.
+   , wpWeight     :: Maybe Integer
+   , wpLayout     :: Maybe WebPanelLayout
    } deriving (Show, Generic)
 
 instance ToJSON WebPanel where
    toJSON = genericToJSON baseOptions
       { fieldLabelModifier = stripFieldNamePrefix "wp"
       }
+
+data WebPanelLayout = WebPanelLayout
+   { wplWidth  :: Length
+   , wplHeight :: Length
+   } deriving (Show, Generic)
+
+instance ToJSON WebPanelLayout where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "wpl"
+      }
+
+data WebItem = WebItem
+   { wiName         :: Name WebItem
+   , wiKey          :: T.Text
+   -- TODO add tooltip support
+   , wiLocation     :: T.Text
+   , wiUrl          :: T.Text
+   , wiConditions   :: [Condition]
+   , wiContext      :: Maybe WebItemContext
+   , wiIcon         :: Maybe IconDetails
+   , wiStyleClasses :: [String]
+   } deriving (Show, Generic)
+
+data WebItemContext = PageContext | AddonContext | ProductContext
+   deriving(Show, Generic)
+
+instance ToJSON WebItemContext where
+   toJSON PageContext = String . T.pack $ "page"
+   toJSON AddonContext = String . T.pack $ "addon"
+   toJSON ProductContext = String . T.pack $ "product"
+
+data JIRAProjectAdminTabPanel = JIRAProjectAdminTabPanel
+   { jpatpKey        :: T.Text
+   , jpatpName       :: Name JIRAProjectAdminTabPanel
+   , jpatpUrl        :: T.Text
+   , jpatpLocation   :: T.Text
+   , jpatpConditions :: [Condition]
+   , jpatpWeight     :: Maybe Integer
+   } deriving (Show, Generic)
+
+instance ToJSON JIRAProjectAdminTabPanel where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "jpatp"
+      }
+
+instance ToJSON (Name JIRAProjectAdminTabPanel) where
+   toJSON = nameToValue
 
 -- | A 'GeneralPage' makes your add-on take a large section of screen realestate, with the intention of displaying
 -- your own page with no other distracting content. This is very useful for pages like Configuration screens or

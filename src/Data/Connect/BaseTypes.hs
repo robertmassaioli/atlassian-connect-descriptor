@@ -75,3 +75,12 @@ instance ToJSON Authentication where
 instance ToJSON AuthType where
    toJSON Jwt  = "jwt"
    toJSON None  = "none"
+
+data Length
+   = Pixels Integer
+   | Percentage Integer
+   deriving (Show, Generic)
+
+instance ToJSON Length where
+   toJSON (Pixels x) = String . pack $ (show x ++ "px")
+   toJSON (Percentage x) = String . pack $ (show x ++ "%")

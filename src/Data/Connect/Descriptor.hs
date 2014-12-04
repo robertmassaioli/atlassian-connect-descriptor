@@ -89,6 +89,7 @@ module Data.Connect.Descriptor (
    , PluginKey(..)
    , Timeout(..)
    , IconDetails(..)
+   , Length(..)
    -- * Authentication
    , Authentication(..)
    , AuthType(..)
@@ -105,7 +106,9 @@ module Data.Connect.Descriptor (
    , ConfluenceModules(..)
    , emptyConfluenceModules
    , WebPanel(..)
+   , WebPanelLayout(..)
    , GeneralPage(..)
+   , JIRAProjectAdminTabPanel(..)
    -- ** Webhooks
    , Webhook(..)
    , WebhookEvent(..)
