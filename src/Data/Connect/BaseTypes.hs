@@ -76,9 +76,10 @@ instance ToJSON AuthType where
    toJSON Jwt  = "jwt"
    toJSON None  = "none"
 
+-- | A basic length type for HTML elements. Useful for 'WebPanel's and other modules that may require length specifications.
 data Length
-   = Pixels Integer
-   | Percentage Integer
+   = Pixels Integer -- ^ Specify a length in pixels
+   | Percentage Integer -- ^ Specify a length as a percentage in the range [0-100].
    deriving (Show, Generic)
 
 instance ToJSON Length where

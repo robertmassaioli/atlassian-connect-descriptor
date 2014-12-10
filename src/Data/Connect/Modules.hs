@@ -116,6 +116,7 @@ instance ToJSON WebPanel where
       { fieldLabelModifier = stripFieldNamePrefix "wp"
       }
 
+-- | A 'WebPanelLayout' allows you to specify the dimensions of your Web Panel if that is required.
 data WebPanelLayout = WebPanelLayout
    { wplWidth  :: Length
    , wplHeight :: Length
@@ -146,6 +147,11 @@ instance ToJSON WebItemContext where
    toJSON AddonContext = String . T.pack $ "addon"
    toJSON ProductContext = String . T.pack $ "product"
 
+-- TODO update the docs for the JIRAProjectAdminTabPanel based on this question: http://goo.gl/c6QUdd
+
+-- | A 'JIRAProjectAdminTabPanel' is useful for when you want to add a page to the administration screens of a project.
+-- This module will create a web item in the sidebar of every project for you and provide a web panel in the JIRA Project
+-- Admin section.
 data JIRAProjectAdminTabPanel = JIRAProjectAdminTabPanel
    { jpatpKey        :: T.Text
    , jpatpName       :: Name JIRAProjectAdminTabPanel

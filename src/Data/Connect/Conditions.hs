@@ -114,7 +114,7 @@ data JIRACondition
    | CanManageAttachmentsJiraCondition
    | FeatureFlagJiraCondition
    | HasIssuePermissionJiraCondition
-   | HasProjectPermissionJiraCondition
+   | HasProjectPermissionJiraCondition -- ^ Returns true if there is a selected project and the user has project admin to it.
    | HasSelectedProjectPermissionJiraCondition
    | HasSubTasksAvaliableJiraCondition
    | HasVotedForIssueJiraCondition
