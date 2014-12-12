@@ -127,6 +127,7 @@ instance ToJSON WebPanelLayout where
       { fieldLabelModifier = stripFieldNamePrefix "wpl"
       }
 
+{-
 data WebItem = WebItem
    { wiName         :: Name WebItem
    , wiKey          :: T.Text
@@ -146,6 +147,7 @@ instance ToJSON WebItemContext where
    toJSON PageContext = String . T.pack $ "page"
    toJSON AddonContext = String . T.pack $ "addon"
    toJSON ProductContext = String . T.pack $ "product"
+-}
 
 -- TODO update the docs for the JIRAProjectAdminTabPanel based on this question: http://goo.gl/c6QUdd
 
