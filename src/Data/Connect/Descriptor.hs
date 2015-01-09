@@ -115,8 +115,8 @@ module Data.Connect.Descriptor (
    , JIRASearchRequestView(..)
    , JIRAGenericTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
-   , Tooltip(..)
-   , simpleTooltip
+   , Description(..)
+   , simpleDescription
    , Target(..)
    , DialogOptions(..)
    , InlineDialogOptions(..)

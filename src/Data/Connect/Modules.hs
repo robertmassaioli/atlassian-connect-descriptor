@@ -16,8 +16,9 @@ module Data.Connect.Modules
    , JIRASearchRequestView(..)
    , JIRAGenericTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
-   , Tooltip(..)
-   , simpleTooltip
+   , JIRAReport(..)
+   , Description(..)
+   , simpleDescription
    , Target(..)
    , DialogOptions(..)
    , InlineDialogOptions(..)
@@ -98,6 +99,7 @@ data JIRAModules = JIRAModules
    , jiraJiraProjectAdminTabPanels :: [JIRAProjectAdminTabPanel]
    , jiraJiraIssueTabPanels        :: [JIRAGenericTabPanel]
    , jiraJiraComponentTabPanels    :: [JIRAGenericTabPanel]
+   , jiraJiraReports               :: [JIRAReport]
    , jiraWebhooks                  :: [Webhook]
    } deriving (Show, Generic)
 
@@ -119,7 +121,7 @@ instance ToJSON ConfluenceModules where
 
 -- | Empty JIRA Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyJIRAModules :: JIRAModules
-emptyJIRAModules = JIRAModules [] [] [] [] [] Nothing [] [] [] [] [] [] [] []
+emptyJIRAModules = JIRAModules [] [] [] [] [] Nothing [] [] [] [] [] [] [] [] []
 
 -- | Empty Confluence Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyConfluenceModules :: ConfluenceModules
@@ -134,24 +136,24 @@ webPanels
 type Weight = Integer
 type ModuleParams = HM.HashMap T.Text T.Text
 
-data Tooltip = Tooltip
-   { ttValue :: T.Text
-   , ttI18n  :: Maybe T.Text
+data Description = Description
+   { dValue :: T.Text
+   , dI18n  :: Maybe T.Text
    } deriving (Show, Generic)
 
-simpleTooltip :: T.Text -> Tooltip
-simpleTooltip t = Tooltip { ttValue = t, ttI18n = Nothing }
+simpleDescription :: T.Text -> Description
+simpleDescription t = Description { dValue = t, dI18n = Nothing }
 
-instance ToJSON Tooltip where
+instance ToJSON Description where
    toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "tt"
+      { fieldLabelModifier = stripFieldNamePrefix "d"
       }
 
 data JIRAWebSection = JIRAWebSection
    { jwsKey        :: T.Text
    , jwsName       :: Name JIRAWebSection
    , jwsLocation   :: T.Text
-   , jwsTooltip    :: Maybe Tooltip
+   , jwsTooltip    :: Maybe Description
    , jwsConditions :: [Condition]
    , jwsWeight     :: Maybe Weight
    , jwsParams     :: ModuleParams
@@ -191,7 +193,7 @@ data WebPanel = WebPanel
    , wpUrl        :: T.Text -- ^ The relative URI that the host product will hit to get HTML content.
    , wpLocation   :: T.Text -- ^ The location that this content should be injected in the host product.
    , wpConditions :: [Condition] -- ^ The 'Condition's that need to be met for this module to be displayed.
-   , wpTooltip    :: Maybe Tooltip
+   , wpTooltip    :: Maybe Description
    , wpWeight     :: Maybe Weight
    , wpLayout     :: Maybe WebPanelLayout
    , wpParams     :: ModuleParams
@@ -218,7 +220,7 @@ data WebItem = WebItem
    , wiName         :: Name WebItem
    , wiLocation     :: T.Text
    , wiUrl          :: T.Text
-   , wiTooltip      :: Maybe Tooltip
+   , wiTooltip      :: Maybe Description
    , wiIcon         :: Maybe IconDetails
    , wiWeight       :: Maybe Weight
    , wiTarget       :: Maybe Target
@@ -290,9 +292,12 @@ data WebItemContext = PageContext | AddonContext | ProductContext
    deriving(Show, Generic)
 
 instance ToJSON WebItemContext where
-   toJSON PageContext = String . T.pack $ "page"
-   toJSON AddonContext = String . T.pack $ "addon"
-   toJSON ProductContext = String . T.pack $ "product"
+   toJSON PageContext = stj "page"
+   toJSON AddonContext = stj "addon"
+   toJSON ProductContext = stj "product"
+
+stj :: String -> Value
+stj = String . T.pack
 
 data JIRAGenericTabPanel = JIRAGenericTabPanel
    { jtpKey        :: T.Text
@@ -395,7 +400,7 @@ data JIRASearchRequestView = JIRASearchRequestView
    { jsrvKey         :: T.Text
    , jsrvName        :: Name JIRASearchRequestView
    , jsrvUrl         :: T.Text
-   , jsrvDescription :: Maybe T.Text
+   , jsrvDescription :: Maybe Description
    , jsrvWeight      :: Maybe Weight
    , jsrvConditions  :: [Condition]
    , jsrvParams      :: ModuleParams
@@ -404,6 +409,34 @@ data JIRASearchRequestView = JIRASearchRequestView
 instance ToJSON JIRASearchRequestView where
    toJSON = genericToJSON baseOptions
       { fieldLabelModifier = stripFieldNamePrefix "jsrv"
+      }
+
+data JIRAReportCategory
+   = AgileRC
+   | IssueAnalysisRC
+   | ForecastManagementRC
+   | OtherRC
+   deriving (Show)
+
+instance ToJSON JIRAReportCategory where
+   toJSON AgileRC = stj "agile"
+   toJSON IssueAnalysisRC = stj "issue_analysis"
+   toJSON ForecastManagementRC = stj "forecast_management"
+   toJSON OtherRC = stj "other"
+
+data JIRAReport = JIRAReport
+   { jrKey            :: T.Text
+   , jrName           :: Name JIRAReport
+   , jrUrl            :: T.Text
+   , jrDescription    :: Description
+   , jrReportCategory :: Maybe JIRAReportCategory
+   , jrWeight         :: Maybe Weight
+   , jrThumbnailUrl   :: Maybe T.Text
+   } deriving (Show, Generic)
+
+instance ToJSON JIRAReport where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "jr"
       }
 
 instance ToJSON (Name WebPanel) where
@@ -422,6 +455,9 @@ instance ToJSON (Name JIRASearchRequestView) where
    toJSON = nameToValue
 
 instance ToJSON (Name JIRAGenericTabPanel) where
+   toJSON = nameToValue
+
+instance ToJSON (Name JIRAReport) where
    toJSON = nameToValue
 
 nameToValue :: Name a -> Value
