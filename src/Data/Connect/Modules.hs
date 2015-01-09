@@ -11,6 +11,9 @@ module Data.Connect.Modules
    , WebPanel(..)
    , WebPanelLayout(..)
    , GeneralPage(..)
+   , AdminPage(..)
+   , ConfigurePage(..)
+   , JIRASearchRequestView(..)
    , JIRAProjectTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
    , Tooltip(..)
@@ -86,6 +89,9 @@ data JIRAModules = JIRAModules
    , jiraWebItems                  :: [WebItem]
    , jiraWebPanels                 :: [WebPanel]
    , jiraGeneralPages              :: [GeneralPage]
+   , jiraAdminPages                :: [AdminPage]
+   , jiraConfigurePage             :: Maybe ConfigurePage
+   , jiraJiraSearchRequestViews    :: [JIRASearchRequestView]
    , jiraWebhooks                  :: [Webhook]
    , jiraJiraProjectTabPanels      :: [JIRAProjectTabPanel]
    , jiraJiraProjectAdminTabPanels :: [JIRAProjectAdminTabPanel]
@@ -109,7 +115,7 @@ instance ToJSON ConfluenceModules where
 
 -- | Empty JIRA Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyJIRAModules :: JIRAModules
-emptyJIRAModules = JIRAModules [] [] [] [] [] [] []
+emptyJIRAModules = JIRAModules [] [] [] [] [] Nothing [] [] [] []
 
 -- | Empty Confluence Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyConfluenceModules :: ConfluenceModules
@@ -181,8 +187,10 @@ data WebPanel = WebPanel
    , wpUrl        :: T.Text -- ^ The relative URI that the host product will hit to get HTML content.
    , wpLocation   :: T.Text -- ^ The location that this content should be injected in the host product.
    , wpConditions :: [Condition] -- ^ The 'Condition's that need to be met for this module to be displayed.
+   , wpTooltip    :: Maybe Tooltip
    , wpWeight     :: Maybe Weight
    , wpLayout     :: Maybe WebPanelLayout
+   , wpParams     :: ModuleParams
    } deriving (Show, Generic)
 
 instance ToJSON WebPanel where
@@ -341,6 +349,7 @@ data GeneralPage = GeneralPage
    , generalPageWeight     :: Maybe Weight -- ^ Determines the order that this item appears in any menu or list.
                                             -- Lower numbers mean that it will appear higher in the list.
    , generalPageConditions :: [Condition] -- ^ The 'Condition's that need to be met for this module to be displayed.
+   , generalPageParams     :: ModuleParams
    } deriving (Show, Generic)
 
 instance ToJSON GeneralPage where
@@ -348,10 +357,66 @@ instance ToJSON GeneralPage where
       { fieldLabelModifier = stripFieldNamePrefix "generalPage"
       }
 
+data AdminPage = AdminPage
+   { adminPageKey        :: T.Text
+   , adminPageName       :: Name AdminPage
+   , adminPageUrl        :: T.Text
+   , adminPageLocation   :: Maybe T.Text
+   , adminPageWeight     :: Maybe Weight
+   , adminPageIcon       :: Maybe IconDetails
+   , adminPageConditions :: [Condition]
+   , adminPageParams     :: ModuleParams
+   } deriving (Show, Generic)
+
+instance ToJSON AdminPage where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "adminPage"
+      }
+
+data ConfigurePage = ConfigurePage
+   { confPageKey        :: T.Text
+   , confPageName       :: Name ConfigurePage
+   , confPageUrl        :: T.Text
+   , confPageLocation   :: Maybe T.Text
+   , confPageWeight     :: Maybe Weight
+   , confPageIcon       :: Maybe IconDetails
+   , confPageConditions :: [Condition]
+   , confPageParams     :: ModuleParams
+   } deriving (Show, Generic)
+
+instance ToJSON ConfigurePage where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "confPage"
+      }
+
+data JIRASearchRequestView = JIRASearchRequestView
+   { jsrvKey         :: T.Text
+   , jsrvName        :: Name JIRASearchRequestView
+   , jsrvUrl         :: T.Text
+   , jsrvDescription :: Maybe T.Text
+   , jsrvWeight      :: Maybe Weight
+   , jsrvConditions  :: [Condition]
+   , jsrvParams      :: ModuleParams
+   } deriving (Show, Generic)
+
+instance ToJSON JIRASearchRequestView where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "jsrv"
+      }
+
 instance ToJSON (Name WebPanel) where
    toJSON = nameToValue
 
 instance ToJSON (Name GeneralPage) where
+   toJSON = nameToValue
+
+instance ToJSON (Name AdminPage) where
+   toJSON = nameToValue
+
+instance ToJSON (Name ConfigurePage) where
+   toJSON = nameToValue
+
+instance ToJSON (Name JIRASearchRequestView) where
    toJSON = nameToValue
 
 nameToValue :: Name a -> Value
