@@ -108,6 +108,7 @@ module Data.Connect.Descriptor (
    , WebPanel(..)
    , WebPanelLayout(..)
    , GeneralPage(..)
+   , JIRAProjectTabPanel
    , JIRAProjectAdminTabPanel(..)
    -- ** Webhooks
    , Webhook(..)
