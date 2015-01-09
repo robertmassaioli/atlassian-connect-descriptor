@@ -105,11 +105,21 @@ module Data.Connect.Descriptor (
    , emptyJIRAModules
    , ConfluenceModules(..)
    , emptyConfluenceModules
+   , JIRAWebSection(..)
+   , WebItem(..)
    , WebPanel(..)
    , WebPanelLayout(..)
    , GeneralPage(..)
-   , JIRAProjectTabPanel
+   , AdminPage(..)
+   , ConfigurePage(..)
+   , JIRASearchRequestView(..)
+   , JIRAGenericTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
+   , Tooltip(..)
+   , simpleTooltip
+   , Target(..)
+   , DialogOptions(..)
+   , InlineDialogOptions(..)
    -- ** Webhooks
    , Webhook(..)
    , WebhookEvent(..)

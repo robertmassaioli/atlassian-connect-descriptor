@@ -14,7 +14,7 @@ module Data.Connect.Modules
    , AdminPage(..)
    , ConfigurePage(..)
    , JIRASearchRequestView(..)
-   , JIRAProjectTabPanel(..)
+   , JIRAGenericTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
    , Tooltip(..)
    , simpleTooltip
@@ -92,9 +92,13 @@ data JIRAModules = JIRAModules
    , jiraAdminPages                :: [AdminPage]
    , jiraConfigurePage             :: Maybe ConfigurePage
    , jiraJiraSearchRequestViews    :: [JIRASearchRequestView]
-   , jiraWebhooks                  :: [Webhook]
-   , jiraJiraProjectTabPanels      :: [JIRAProjectTabPanel]
+   , jiraJiraProfileTabPanels      :: [JIRAGenericTabPanel]
+   , jiraJiraVersionTabPanels      :: [JIRAGenericTabPanel]
+   , jiraJiraProjectTabPanels      :: [JIRAGenericTabPanel]
    , jiraJiraProjectAdminTabPanels :: [JIRAProjectAdminTabPanel]
+   , jiraJiraIssueTabPanels        :: [JIRAGenericTabPanel]
+   , jiraJiraComponentTabPanels    :: [JIRAGenericTabPanel]
+   , jiraWebhooks                  :: [Webhook]
    } deriving (Show, Generic)
 
 instance ToJSON JIRAModules where
@@ -115,7 +119,7 @@ instance ToJSON ConfluenceModules where
 
 -- | Empty JIRA Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyJIRAModules :: JIRAModules
-emptyJIRAModules = JIRAModules [] [] [] [] [] Nothing [] [] [] []
+emptyJIRAModules = JIRAModules [] [] [] [] [] Nothing [] [] [] [] [] [] [] []
 
 -- | Empty Confluence Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyConfluenceModules :: ConfluenceModules
@@ -290,22 +294,19 @@ instance ToJSON WebItemContext where
    toJSON AddonContext = String . T.pack $ "addon"
    toJSON ProductContext = String . T.pack $ "product"
 
-data JIRAProjectTabPanel = JIRAProjectTabPanel
-   { jptpKey        :: T.Text
-   , jptpName       :: Name JIRAProjectTabPanel
-   , jptpUrl        :: T.Text
-   , jptpConditions :: [Condition]
-   , jptpWeight     :: Maybe Weight
-   , jptpParams     :: ModuleParams
+data JIRAGenericTabPanel = JIRAGenericTabPanel
+   { jtpKey        :: T.Text
+   , jtpName       :: Name JIRAGenericTabPanel
+   , jtpUrl        :: T.Text
+   , jtpConditions :: [Condition]
+   , jtpWeight     :: Maybe Weight
+   , jtpParams     :: ModuleParams
    } deriving (Show, Generic)
 
-instance ToJSON JIRAProjectTabPanel where
+instance ToJSON JIRAGenericTabPanel where
    toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "jptp"
+      { fieldLabelModifier = stripFieldNamePrefix "jtp"
       }
-
-instance ToJSON (Name JIRAProjectTabPanel) where
-   toJSON = nameToValue
 
 -- TODO update the docs for the JIRAProjectAdminTabPanel based on this question: http://goo.gl/c6QUdd
 
@@ -319,6 +320,7 @@ data JIRAProjectAdminTabPanel = JIRAProjectAdminTabPanel
    , jpatpLocation   :: T.Text
    , jpatpConditions :: [Condition]
    , jpatpWeight     :: Maybe Weight
+   , jpatpParams     :: ModuleParams
    } deriving (Show, Generic)
 
 instance ToJSON JIRAProjectAdminTabPanel where
@@ -417,6 +419,9 @@ instance ToJSON (Name ConfigurePage) where
    toJSON = nameToValue
 
 instance ToJSON (Name JIRASearchRequestView) where
+   toJSON = nameToValue
+
+instance ToJSON (Name JIRAGenericTabPanel) where
    toJSON = nameToValue
 
 nameToValue :: Name a -> Value
