@@ -11,6 +11,7 @@ import qualified Data.Text               as T
 import           Network.URI
 import           Test.HUnit
 import           ValueExtractors
+import qualified Data.ByteString.Lazy.Char8 as BLC
 
 toURI :: String -> URI
 toURI = fromJust . parseURI
@@ -83,6 +84,7 @@ descriptorTests = TestList
 basicDescriptorTest :: Test
 basicDescriptorTest = TestCase $ do
     let jv = toJSON exampleDescriptor1
+    BLC.putStrLn . encode $ exampleDescriptor1
     isObject jv @? "Expect the descriptor to be one big json object."
     (getString =<< get "key" jv) `isEqualTo` "my-example-connect"
     (getString =<< get "baseUrl" jv) `isEqualTo` (T.pack . show $ baseURL)
