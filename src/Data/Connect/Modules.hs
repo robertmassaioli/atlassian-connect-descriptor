@@ -10,9 +10,7 @@ module Data.Connect.Modules
    , WebItem(..)
    , WebPanel(..)
    , WebPanelLayout(..)
-   , GeneralPage(..)
-   , AdminPage(..)
-   , ConfigurePage(..)
+   , JIRAPage(..)
    , JIRASearchRequestView(..)
    , JIRAGenericTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
@@ -100,9 +98,9 @@ data JIRAModules = JIRAModules
    { jiraWebSections               :: [JIRAWebSection]
    , jiraWebItems                  :: [WebItem]
    , jiraWebPanels                 :: [WebPanel]
-   , jiraGeneralPages              :: [GeneralPage]
-   , jiraAdminPages                :: [AdminPage]
-   , jiraConfigurePage             :: Maybe ConfigurePage
+   , jiraGeneralPages              :: [JIRAPage]
+   , jiraAdminPages                :: [JIRAPage]
+   , jiraConfigurePage             :: Maybe JIRAPage
    , jiraJiraSearchRequestViews    :: [JIRASearchRequestView]
    , jiraJiraProfileTabPanels      :: [JIRAGenericTabPanel]
    , jiraJiraVersionTabPanels      :: [JIRAGenericTabPanel]
@@ -337,9 +335,15 @@ instance ToJSON JIRAProjectAdminTabPanel where
       { fieldLabelModifier = stripFieldNamePrefix "jpatp"
       }
 
--- | A 'GeneralPage' makes your add-on take a large section of screen realestate, with the intention of displaying
--- your own page with no other distracting content. This is very useful for pages like Configuration screens or
--- Statistics pages where you really want the user to be fully working with your add-on inside the host product.
+-- | A 'JIRAPage' is gives you a location in the host product that you addon can present content and behave just like any
+-- other host product page. The main types of pages in JIRA are:
+--
+-- * General pages: for just getting a geniric chunk of realestate to display your content.
+-- * Admin pages: for getting a page in the admin seciton of JIRA to display your content.
+-- * Configuration page: Every Atlassian Connect plugin can have a configuration page to configure the plugin when installed.
+--
+-- This is very useful for pages like Configuration screens or Statistics pages where you really want the user to be
+-- immersed in working with your add-on inside the host product.
 --
 -- General pages, like Web Panels, are common to JIRA and Confluence and share the same json format. However they have
 -- separate documentation:
@@ -347,54 +351,23 @@ instance ToJSON JIRAProjectAdminTabPanel where
 -- * JIRA General Page: <https://developer.atlassian.com/static/connect/docs/modules/jira/general-page.html>
 -- * Confluence General Page: <https://developer.atlassian.com/static/connect/docs/modules/confluence/general-page.html>
 --
--- Even though, at this point in time, the documentation looks identical.
-data GeneralPage = GeneralPage
-   { generalPageKey        :: T.Text -- ^ The add-on unique key for this module.
-   , generalPageName       :: I18nText -- ^ The name of this General Page. Likely to be used in the page title.
-   , generalPageUrl        :: T.Text -- ^ The relative URI that the host product will hit to get the HTML content for the page.
-   , generalPageLocation   :: Maybe T.Text -- ^ The location for this General Page to display; see the docs for your options.
-   , generalPageIcon       :: Maybe IconDetails -- ^ The optional icon to use for this general page.
-   , generalPageWeight     :: Maybe Weight -- ^ Determines the order that this item appears in any menu or list.
-                                            -- Lower numbers mean that it will appear higher in the list.
-   , generalPageConditions :: [Condition] -- ^ The 'Condition's that need to be met for this module to be displayed.
-   , generalPageParams     :: ModuleParams -- ^ Optional parameters for the tab panel.
+-- Even though, at this point in time, the documentation looks identical. You can find the Admin page and Configure page
+-- documentation in the official Atlassian Connect documentation too.
+data JIRAPage = JIRAPage
+   { jiraPageKey        :: T.Text -- ^ The add-on unique key for this module.
+   , jiraPageName       :: I18nText -- ^ The name of this JIRA page. Likely to be used in the page title.
+   , jiraPageUrl        :: T.Text -- ^ The relative URI that the host product will hit to get the HTML content for the page.
+   , jiraPageLocation   :: Maybe T.Text -- ^ The location for this General Page to display; see the docs for your options.
+   , jiraPageWeight     :: Maybe Weight -- ^ Determines the order that this item appears in any menu or list.
+                                        -- Lower numbers mean that it will appear higher in the list.
+   , jiraPageIcon       :: Maybe IconDetails -- ^ The optional icon to use for this JIRA page.
+   , jiraPageConditions :: [Condition] -- ^ The 'Condition's that need to be met for this page to be displayed.
+   , jiraPageParams     :: ModuleParams -- ^ Optional parameters for the page.
    } deriving (Show, Generic)
 
-instance ToJSON GeneralPage where
+instance ToJSON JIRAPage where
    toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "generalPage"
-      }
-
-data AdminPage = AdminPage
-   { adminPageKey        :: T.Text
-   , adminPageName       :: I18nText
-   , adminPageUrl        :: T.Text
-   , adminPageLocation   :: Maybe T.Text
-   , adminPageWeight     :: Maybe Weight
-   , adminPageIcon       :: Maybe IconDetails
-   , adminPageConditions :: [Condition]
-   , adminPageParams     :: ModuleParams
-   } deriving (Show, Generic)
-
-instance ToJSON AdminPage where
-   toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "adminPage"
-      }
-
-data ConfigurePage = ConfigurePage
-   { confPageKey        :: T.Text
-   , confPageName       :: I18nText
-   , confPageUrl        :: T.Text
-   , confPageLocation   :: Maybe T.Text
-   , confPageWeight     :: Maybe Weight
-   , confPageIcon       :: Maybe IconDetails
-   , confPageConditions :: [Condition]
-   , confPageParams     :: ModuleParams
-   } deriving (Show, Generic)
-
-instance ToJSON ConfigurePage where
-   toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "confPage"
+      { fieldLabelModifier = stripFieldNamePrefix "jiraPage"
       }
 
 data JIRASearchRequestView = JIRASearchRequestView
