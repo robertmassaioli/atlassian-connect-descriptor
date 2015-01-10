@@ -70,19 +70,26 @@ Supported JIRA Modules
 webSections
 webItems
 webPanels
+
 generalPages
 adminPages
 configurePage
-jiraSearchRequestViews
+
 jiraProfileTabPanels
 jiraVersionTabPanels
 jiraProjectTabPanels
 jiraProjectAdminTabPanels
 jiraIssueTabPanels
 jiraComponentTabPanels
+
+jiraSearchRequestViews
+
 jiraReports
+
 webhooks
+
 jiraWorkflowPostFunctions
+
 jiraEntityProperties
 
 -}
@@ -133,12 +140,6 @@ emptyJIRAModules = JIRAModules [] [] [] [] [] Nothing [] [] [] [] [] [] [] [] []
 emptyConfluenceModules :: ConfluenceModules
 emptyConfluenceModules = ConfluenceModules []
 
-{-
-webSections
-webItems
-webPanels
--}
-
 type Weight = Integer
 type ModuleParams = HM.HashMap T.Text T.Text
 
@@ -183,10 +184,10 @@ data WebPanel = WebPanel
    , wpUrl        :: T.Text -- ^ The relative URI that the host product will hit to get HTML content.
    , wpLocation   :: T.Text -- ^ The location that this content should be injected in the host product.
    , wpConditions :: [Condition] -- ^ The 'Condition's that need to be met for this module to be displayed.
-   , wpTooltip    :: Maybe I18nText
-   , wpWeight     :: Maybe Weight
-   , wpLayout     :: Maybe WebPanelLayout
-   , wpParams     :: ModuleParams
+   , wpTooltip    :: Maybe I18nText -- ^ A tooltip that explains what this is for.
+   , wpWeight     :: Maybe Weight -- ^ Web panels can be ordered and a higher weight makes you appear lower down the page.
+   , wpLayout     :: Maybe WebPanelLayout -- ^ You can specify the dimensions of this panel. This will only be considered in certain locations.
+   , wpParams     :: ModuleParams -- ^ You can pass parameters to the web panel.
    } deriving (Show, Generic)
 
 instance ToJSON WebPanel where
@@ -205,19 +206,27 @@ instance ToJSON WebPanelLayout where
       { fieldLabelModifier = stripFieldNamePrefix "wpl"
       }
 
+-- | A 'WebItem' is a like that can be placed in one of an Atlassian Products many menus. Currently the WebItem has the
+-- same structure for both JIRA and Confluence. You can read their documentation here:
+--
+-- * JIRA Web Items: <https://developer.atlassian.com/static/connect/docs/modules/jira/web-item.html>
+-- * Confluence Web Items: <https://developer.atlassian.com/static/connect/docs/modules/confluence/web-item.html>
+--
+-- Web items are very useful for providing links to your Atlassian Connect pages. See 'GeneralPage' or 'AdminPage' for
+-- more information.
 data WebItem = WebItem
-   { wiKey          :: T.Text
-   , wiName         :: I18nText
-   , wiLocation     :: T.Text
-   , wiUrl          :: T.Text
-   , wiTooltip      :: Maybe I18nText
-   , wiIcon         :: Maybe IconDetails
-   , wiWeight       :: Maybe Weight
-   , wiTarget       :: Maybe Target
-   , wiStyleClasses :: [T.Text]
-   , wiContext      :: Maybe WebItemContext
-   , wiConditions   :: [Condition]
-   , wiParams       :: ModuleParams
+   { wiKey          :: T.Text -- ^ The add-on unique key for this module.
+   , wiName         :: I18nText -- ^ The name of this web item. It will appear as the text of the link.
+   , wiLocation     :: T.Text -- ^ Where in the product UI this web item will appear.
+   , wiUrl          :: T.Text -- ^ The URL to direct the user to. May be relative to the host Product or the Addon depending on the context.
+   , wiTooltip      :: Maybe I18nText -- ^ An optional tooltip for the link.
+   , wiIcon         :: Maybe IconDetails -- ^ An optional icon to display with the link text or as the link
+   , wiWeight       :: Maybe Weight -- ^ The higher the weight the lower down in the location menu this web item will appear.
+   , wiTarget       :: Maybe Target -- ^ Determines the way the link is opened. In the page, in a dialog or in an inline dialog.
+   , wiStyleClasses :: [T.Text] -- ^ Specifies custom styles for the web item target page
+   , wiContext      :: Maybe WebItemContext -- ^ Determines if the url is relative to the page, product or connect addon.
+   , wiConditions   :: [Condition] -- ^ Determines the conditions under which to show this link.
+   , wiParams       :: ModuleParams -- ^ Optional parameters that you can pass to the web item.
    } deriving (Show, Generic)
 
 instance ToJSON WebItem where
@@ -225,10 +234,11 @@ instance ToJSON WebItem where
          { fieldLabelModifier = lowerAll . stripFieldNamePrefix "wi"
          }
 
+-- | A 'Target' represents the location that a link will be opened into.
 data Target
-   = TargetPage
-   | TargetDialog (Maybe DialogOptions)
-   | TargetInlineDialog (Maybe InlineDialogOptions)
+   = TargetPage -- ^ Open the link into the current page.
+   | TargetDialog (Maybe DialogOptions) -- ^ Open the link into a dialog on the page with the given options.
+   | TargetInlineDialog (Maybe InlineDialogOptions) -- ^ Open the link into an inline dialog with the given options.
    deriving (Show)
 
 tp :: String -> T.Text
@@ -245,10 +255,11 @@ instance ToJSON Target where
                Just options -> [tp "options" .= toJSON options]
                Nothing -> []
 
+-- | Options for a dialog that a link may be opened into.
 data DialogOptions = DialogOptions
-   { doHeight :: Maybe T.Text
-   , doWidth  :: Maybe T.Text
-   , doChrome :: Maybe Bool
+   { doHeight :: Maybe Integer -- ^ The height of the dialog on the page.
+   , doWidth  :: Maybe Integer -- ^ The width of the dialog on the page.
+   , doChrome :: Maybe Bool -- ^ Whether the dialog should contain the AUI header and buttons. Default is true
    } deriving (Show, Generic)
 
 instance ToJSON DialogOptions where
@@ -256,16 +267,17 @@ instance ToJSON DialogOptions where
          { fieldLabelModifier = lowerAll . stripFieldNamePrefix "do"
          }
 
+-- | Options for an inline dialog that a link may be opened into.
 data InlineDialogOptions = InlineDialogOptions
-   { idoWidth             :: Maybe T.Text
-   , idoIsRelativeToMouse :: Maybe Bool
-   , idoPersistent        :: Maybe Bool
-   , idoShowDelay         :: Maybe Integer
-   , idoOnHover           :: Maybe Bool
-   , idoOffsetX           :: Maybe T.Text
-   , idoOffsetY           :: Maybe T.Text
-   , idoCloseOthers       :: Maybe Bool
-   , idoOnTop             :: Maybe Bool
+   { idoWidth             :: Maybe T.Text -- ^ Sets how wide the inline-dialog is in pixels
+   , idoOnTop             :: Maybe Bool -- ^ Determines if the dialog should be shown above the trigger or not
+   , idoIsRelativeToMouse :: Maybe Bool -- ^ Determines if the dialog should be shown relative to where the mouse is at the time of the event trigger
+   , idoShowDelay         :: Maybe Integer -- ^ Determines how long in milliseconds after a show trigger is fired until the dialog is shown
+   , idoOnHover           :: Maybe Bool -- ^ Determines whether the inline-Dialog will show on a mouseOver or mouseClick of the trigger
+   , idoOffsetX           :: Maybe T.Text -- ^ Sets an offset distance of the inline-dialog from the trigger element along the x-axis in pixels
+   , idoOffsetY           :: Maybe T.Text -- ^ Sets an offset distance of the inline-dialog from the trigger element along the y-axis in pixels
+   , idoPersistent        :: Maybe Bool -- ^ This option, ignores the 'closeOthers' option
+   , idoCloseOthers       :: Maybe Bool -- ^ Cetermines if all other dialogs on the screen are closed when this one is opened
    } deriving (Show, Generic)
 
 instance ToJSON InlineDialogOptions where
@@ -275,6 +287,8 @@ instance ToJSON InlineDialogOptions where
 
 -- TODO this cannot have a generic implimentation
 
+-- | Wether to open the url relative to the current page, the current addon or the current product. This lets you control
+-- where Atlassian Connect web items point to.
 data WebItemContext = PageContext | AddonContext | ProductContext
    deriving(Show, Generic)
 
@@ -286,13 +300,16 @@ instance ToJSON WebItemContext where
 stj :: String -> Value
 stj = String . T.pack
 
+-- | JIRA has the concept of a TabPanel which is a panel where you can inject content along with a 'WebItem' that is
+-- automatically created for you so that you can navigate to the tab panel in question. Tab panels often have a common format
+-- and this 'JIRAGenericTabPanel' encapsulates that common format and allows you to apply it to many different scenarios.
 data JIRAGenericTabPanel = JIRAGenericTabPanel
-   { jtpKey        :: T.Text
-   , jtpName       :: I18nText
-   , jtpUrl        :: T.Text
-   , jtpConditions :: [Condition]
-   , jtpWeight     :: Maybe Weight
-   , jtpParams     :: ModuleParams
+   { jtpKey        :: T.Text -- ^ The add-on unique key for this module.
+   , jtpName       :: I18nText -- ^ The user facing name of this panel. Likely to appear as the name of the link to the tab panel.
+   , jtpUrl        :: T.Text -- ^ The URL to your addon where you will provide the content for the panel.
+   , jtpConditions :: [Condition] -- ^ The conditions under which this tapb panel should be displayed.
+   , jtpWeight     :: Maybe Weight -- ^ The higher the weight the lower down in the list of tabs the link to this tab panel will be displayed.
+   , jtpParams     :: ModuleParams -- ^ Optional parameters for the tab panel.
    } deriving (Show, Generic)
 
 instance ToJSON JIRAGenericTabPanel where
@@ -306,22 +323,19 @@ instance ToJSON JIRAGenericTabPanel where
 -- This module will create a web item in the sidebar of every project for you and provide a web panel in the JIRA Project
 -- Admin section.
 data JIRAProjectAdminTabPanel = JIRAProjectAdminTabPanel
-   { jpatpKey        :: T.Text
-   , jpatpName       :: I18nText
-   , jpatpUrl        :: T.Text
-   , jpatpLocation   :: T.Text
-   , jpatpConditions :: [Condition]
-   , jpatpWeight     :: Maybe Weight
-   , jpatpParams     :: ModuleParams
+   { jpatpKey        :: T.Text -- ^ The add-on unique key for this module.
+   , jpatpName       :: I18nText -- ^ The user facing name of this panel. Likely to appear as the name of the link to the tab panel.
+   , jpatpUrl        :: T.Text -- ^ The URL to your addon where you will provide the content for the panel.
+   , jpatpLocation   :: T.Text -- ^ The location in JIRA Admin that you wish the link to this panel to appear.
+   , jpatpConditions :: [Condition] -- ^ The conditions under which this panel should be displayed. UserIsAdminCondition is redundant.
+   , jpatpWeight     :: Maybe Weight -- ^ The higher the weight the lower down in the list of tabs the link to this tab panel will be displayed.
+   , jpatpParams     :: ModuleParams -- ^ Optional parameters for the tab panel.
    } deriving (Show, Generic)
 
 instance ToJSON JIRAProjectAdminTabPanel where
    toJSON = genericToJSON baseOptions
       { fieldLabelModifier = stripFieldNamePrefix "jpatp"
       }
-
-instance ToJSON (Name JIRAProjectAdminTabPanel) where
-   toJSON = nameToValue
 
 -- | A 'GeneralPage' makes your add-on take a large section of screen realestate, with the intention of displaying
 -- your own page with no other distracting content. This is very useful for pages like Configuration screens or
@@ -343,7 +357,7 @@ data GeneralPage = GeneralPage
    , generalPageWeight     :: Maybe Weight -- ^ Determines the order that this item appears in any menu or list.
                                             -- Lower numbers mean that it will appear higher in the list.
    , generalPageConditions :: [Condition] -- ^ The 'Condition's that need to be met for this module to be displayed.
-   , generalPageParams     :: ModuleParams
+   , generalPageParams     :: ModuleParams -- ^ Optional parameters for the tab panel.
    } deriving (Show, Generic)
 
 instance ToJSON GeneralPage where
@@ -491,6 +505,3 @@ instance ToJSON ExtractionType where
    toJSON ExtractionTypeText = stj "text"
    toJSON ExtractionTypeString = stj "string"
    toJSON ExtractionTypeDate = stj "date"
-
-nameToValue :: Name a -> Value
-nameToValue (Name name) = object [ T.pack "value" .= name ]
