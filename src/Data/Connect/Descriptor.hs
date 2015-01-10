@@ -84,17 +84,19 @@ module Data.Connect.Descriptor (
      Plugin(..)
    , pluginDescriptor
    -- * Basic Types
-   , Name(..)
    , Key(..)
    , PluginKey(..)
    , Timeout(..)
-   , IconDetails(..)
-   , Length(..)
-   -- * Authentication
+   , Vendor(..)
    , Authentication(..)
    , AuthType(..)
-   -- * Vendor Details
-   , Vendor(..)
+   , IconDetails(..)
+   , Name(..)
+   , I18nText(..)
+   , simpleText
+   , URLBean(..)
+   , toUrl
+   , Length(..)
    -- * Lifecycle
    , Lifecycle(..)
    , emptyLifecycle
@@ -115,8 +117,6 @@ module Data.Connect.Descriptor (
    , JIRASearchRequestView(..)
    , JIRAGenericTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
-   , Description(..)
-   , simpleDescription
    , Target(..)
    , DialogOptions(..)
    , InlineDialogOptions(..)

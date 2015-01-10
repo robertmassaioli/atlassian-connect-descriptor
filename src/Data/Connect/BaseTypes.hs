@@ -2,7 +2,22 @@
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings          #-}
-module Data.Connect.BaseTypes where
+module Data.Connect.BaseTypes
+   ( Key(..)
+   , PluginKey(..)
+   , Timeout(..)
+   , Vendor(..)
+   , Authentication(..)
+   , AuthType(..)
+   , IconDetails(..)
+   , Name(..)
+   , I18nText(..)
+   , simpleText
+   , URLBean(..)
+   , toUrl
+   , Length(..)
+   )
+   where
 
 import           Data.Aeson
 import           Data.Aeson.Types
@@ -18,6 +33,8 @@ data Key t a = Key t deriving (Show, Eq, Generic)
 
 -- | This data type represents an Atlassian Connect Add-on key.
 data PluginKey = PluginKey Text deriving (Show, Eq, Generic)
+
+instance ToJSON PluginKey
 
 -- | Represents a timeout in seconds.
 newtype Timeout = Timeout DTU.Second deriving (Show, Eq, Enum, Num, Ord, Real, Integral)
@@ -47,12 +64,35 @@ data IconDetails = IconDetails
    , iconHeight :: Maybe Integer -- ^ The height of the icon.
    } deriving (Show, Generic)
 
-instance ToJSON PluginKey
-
 -- | Atlassian Connect descriptors contain many names: module names, add-on names, vendor names etc. We want to make sure
 -- that these names don't get put in places that they do not belong. Or, if they do get moved around, they get moved around
 -- specifically. We are just adding type saefty to names.
 data Name a = Name Text deriving (Show, Eq, Generic)
+
+data I18nText = I18nText
+   { dValue :: Text
+   , dI18n  :: Maybe Text
+   } deriving (Show, Generic)
+
+instance ToJSON I18nText where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "d"
+      }
+
+simpleText :: Text -> I18nText
+simpleText t = I18nText { dValue = t, dI18n = Nothing }
+
+data URLBean = URLBean
+   { ubUrl :: Text
+   } deriving (Show, Generic)
+
+instance ToJSON URLBean where
+   toJSON = genericToJSON baseOptions
+         { fieldLabelModifier = stripFieldNamePrefix "ub"
+         }
+
+toUrl :: Text -> URLBean
+toUrl = URLBean
 
 instance ToJSON (Name PluginKey)
 instance ToJSON (Name Vendor)

@@ -17,11 +17,15 @@ module Data.Connect.Modules
    , JIRAGenericTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
    , JIRAReport(..)
-   , Description(..)
-   , simpleDescription
    , Target(..)
+   , JIRAWorkflowPostFunction(..)
    , DialogOptions(..)
    , InlineDialogOptions(..)
+   , JIRAEntityProperties(..)
+   , EntityType(..)
+   , KeyConfiguration(..)
+   , Extraction(..)
+   , ExtractionType(..)
    ) where
 
 import           Data.Aeson
@@ -101,6 +105,8 @@ data JIRAModules = JIRAModules
    , jiraJiraComponentTabPanels    :: [JIRAGenericTabPanel]
    , jiraJiraReports               :: [JIRAReport]
    , jiraWebhooks                  :: [Webhook]
+   , jiraJiraWorkflowPostFunctions :: [JIRAWorkflowPostFunction]
+   , jiraJiraEntityProperties      :: [JIRAEntityProperties]
    } deriving (Show, Generic)
 
 instance ToJSON JIRAModules where
@@ -121,7 +127,7 @@ instance ToJSON ConfluenceModules where
 
 -- | Empty JIRA Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyJIRAModules :: JIRAModules
-emptyJIRAModules = JIRAModules [] [] [] [] [] Nothing [] [] [] [] [] [] [] [] []
+emptyJIRAModules = JIRAModules [] [] [] [] [] Nothing [] [] [] [] [] [] [] [] [] [] []
 
 -- | Empty Confluence Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyConfluenceModules :: ConfluenceModules
@@ -136,24 +142,11 @@ webPanels
 type Weight = Integer
 type ModuleParams = HM.HashMap T.Text T.Text
 
-data Description = Description
-   { dValue :: T.Text
-   , dI18n  :: Maybe T.Text
-   } deriving (Show, Generic)
-
-simpleDescription :: T.Text -> Description
-simpleDescription t = Description { dValue = t, dI18n = Nothing }
-
-instance ToJSON Description where
-   toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "d"
-      }
-
 data JIRAWebSection = JIRAWebSection
    { jwsKey        :: T.Text
-   , jwsName       :: Name JIRAWebSection
+   , jwsName       :: I18nText
    , jwsLocation   :: T.Text
-   , jwsTooltip    :: Maybe Description
+   , jwsTooltip    :: Maybe I18nText
    , jwsConditions :: [Condition]
    , jwsWeight     :: Maybe Weight
    , jwsParams     :: ModuleParams
@@ -163,9 +156,6 @@ instance ToJSON JIRAWebSection where
    toJSON = genericToJSON baseOptions
       { fieldLabelModifier = stripFieldNamePrefix "tt"
       }
-
-instance ToJSON (Name JIRAWebSection) where
-   toJSON = nameToValue
 
 -- | A 'WebPanel' is an injectable segment of the host application that you can place content inside. Currently the
 -- WebPanel has the same structure for both JIRA and Confluence but, potentially, that could change in the future.
@@ -189,11 +179,11 @@ instance ToJSON (Name JIRAWebSection) where
 -- WebPanels are a great way to inject your add-on's content into the host application.
 data WebPanel = WebPanel
    { wpKey        :: T.Text -- ^ The add-on unique key for this module.
-   , wpName       :: Name WebPanel -- ^ The name of this panel, likely to appear in the User Interface.
+   , wpName       :: I18nText -- ^ The name of this panel, likely to appear in the User Interface.
    , wpUrl        :: T.Text -- ^ The relative URI that the host product will hit to get HTML content.
    , wpLocation   :: T.Text -- ^ The location that this content should be injected in the host product.
    , wpConditions :: [Condition] -- ^ The 'Condition's that need to be met for this module to be displayed.
-   , wpTooltip    :: Maybe Description
+   , wpTooltip    :: Maybe I18nText
    , wpWeight     :: Maybe Weight
    , wpLayout     :: Maybe WebPanelLayout
    , wpParams     :: ModuleParams
@@ -217,10 +207,10 @@ instance ToJSON WebPanelLayout where
 
 data WebItem = WebItem
    { wiKey          :: T.Text
-   , wiName         :: Name WebItem
+   , wiName         :: I18nText
    , wiLocation     :: T.Text
    , wiUrl          :: T.Text
-   , wiTooltip      :: Maybe Description
+   , wiTooltip      :: Maybe I18nText
    , wiIcon         :: Maybe IconDetails
    , wiWeight       :: Maybe Weight
    , wiTarget       :: Maybe Target
@@ -234,9 +224,6 @@ instance ToJSON WebItem where
    toJSON = genericToJSON baseOptions
          { fieldLabelModifier = lowerAll . stripFieldNamePrefix "wi"
          }
-
-instance ToJSON (Name WebItem) where
-   toJSON = nameToValue
 
 data Target
    = TargetPage
@@ -301,7 +288,7 @@ stj = String . T.pack
 
 data JIRAGenericTabPanel = JIRAGenericTabPanel
    { jtpKey        :: T.Text
-   , jtpName       :: Name JIRAGenericTabPanel
+   , jtpName       :: I18nText
    , jtpUrl        :: T.Text
    , jtpConditions :: [Condition]
    , jtpWeight     :: Maybe Weight
@@ -320,7 +307,7 @@ instance ToJSON JIRAGenericTabPanel where
 -- Admin section.
 data JIRAProjectAdminTabPanel = JIRAProjectAdminTabPanel
    { jpatpKey        :: T.Text
-   , jpatpName       :: Name JIRAProjectAdminTabPanel
+   , jpatpName       :: I18nText
    , jpatpUrl        :: T.Text
    , jpatpLocation   :: T.Text
    , jpatpConditions :: [Condition]
@@ -349,7 +336,7 @@ instance ToJSON (Name JIRAProjectAdminTabPanel) where
 -- Even though, at this point in time, the documentation looks identical.
 data GeneralPage = GeneralPage
    { generalPageKey        :: T.Text -- ^ The add-on unique key for this module.
-   , generalPageName       :: Name GeneralPage -- ^ The name of this General Page. Likely to be used in the page title.
+   , generalPageName       :: I18nText -- ^ The name of this General Page. Likely to be used in the page title.
    , generalPageUrl        :: T.Text -- ^ The relative URI that the host product will hit to get the HTML content for the page.
    , generalPageLocation   :: Maybe T.Text -- ^ The location for this General Page to display; see the docs for your options.
    , generalPageIcon       :: Maybe IconDetails -- ^ The optional icon to use for this general page.
@@ -366,7 +353,7 @@ instance ToJSON GeneralPage where
 
 data AdminPage = AdminPage
    { adminPageKey        :: T.Text
-   , adminPageName       :: Name AdminPage
+   , adminPageName       :: I18nText
    , adminPageUrl        :: T.Text
    , adminPageLocation   :: Maybe T.Text
    , adminPageWeight     :: Maybe Weight
@@ -382,7 +369,7 @@ instance ToJSON AdminPage where
 
 data ConfigurePage = ConfigurePage
    { confPageKey        :: T.Text
-   , confPageName       :: Name ConfigurePage
+   , confPageName       :: I18nText
    , confPageUrl        :: T.Text
    , confPageLocation   :: Maybe T.Text
    , confPageWeight     :: Maybe Weight
@@ -398,9 +385,9 @@ instance ToJSON ConfigurePage where
 
 data JIRASearchRequestView = JIRASearchRequestView
    { jsrvKey         :: T.Text
-   , jsrvName        :: Name JIRASearchRequestView
+   , jsrvName        :: I18nText
    , jsrvUrl         :: T.Text
-   , jsrvDescription :: Maybe Description
+   , jsrvDescription :: Maybe I18nText
    , jsrvWeight      :: Maybe Weight
    , jsrvConditions  :: [Condition]
    , jsrvParams      :: ModuleParams
@@ -426,9 +413,9 @@ instance ToJSON JIRAReportCategory where
 
 data JIRAReport = JIRAReport
    { jrKey            :: T.Text
-   , jrName           :: Name JIRAReport
+   , jrName           :: I18nText
    , jrUrl            :: T.Text
-   , jrDescription    :: Description
+   , jrDescription    :: I18nText
    , jrReportCategory :: Maybe JIRAReportCategory
    , jrWeight         :: Maybe Weight
    , jrThumbnailUrl   :: Maybe T.Text
@@ -439,26 +426,71 @@ instance ToJSON JIRAReport where
       { fieldLabelModifier = stripFieldNamePrefix "jr"
       }
 
-instance ToJSON (Name WebPanel) where
-   toJSON = nameToValue
+data JIRAWorkflowPostFunction = JIRAWorkflowPostFunction
+   { jwpfKey         :: T.Text
+   , jwpfName        :: I18nText
+   , jwpfTriggered   :: URLBean
+   , jwpfDescription :: Maybe I18nText
+   , jwpfCreate      :: Maybe URLBean
+   , jwpfView        :: Maybe URLBean
+   , jwpfEdit        :: Maybe URLBean
+   } deriving (Show, Generic)
 
-instance ToJSON (Name GeneralPage) where
-   toJSON = nameToValue
+instance ToJSON JIRAWorkflowPostFunction where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "jwpf"
+      }
 
-instance ToJSON (Name AdminPage) where
-   toJSON = nameToValue
+data JIRAEntityProperties = JIRAEntityProperties
+   { jepKey               :: T.Text
+   , jepName              :: I18nText
+   , jepEntityType        :: Maybe EntityType
+   , jepKeyConfigurations :: Maybe [KeyConfiguration]
+   } deriving (Show, Generic)
 
-instance ToJSON (Name ConfigurePage) where
-   toJSON = nameToValue
+instance ToJSON JIRAEntityProperties where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "jep"
+      }
 
-instance ToJSON (Name JIRASearchRequestView) where
-   toJSON = nameToValue
+data KeyConfiguration = KeyConfiguration
+   { kcPropertyKey :: T.Text
+   , kcExtractions :: [Extraction]
+   } deriving (Show, Generic)
 
-instance ToJSON (Name JIRAGenericTabPanel) where
-   toJSON = nameToValue
+instance ToJSON KeyConfiguration where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "kc"
+      }
 
-instance ToJSON (Name JIRAReport) where
-   toJSON = nameToValue
+data Extraction = Extraction
+   { extractionObjectName :: T.Text
+   , extractionType       :: ExtractionType
+   } deriving (Show, Generic)
+
+instance ToJSON Extraction where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "extraction"
+      }
+
+data EntityType = IssueEntityType
+   deriving (Show)
+
+instance ToJSON EntityType where
+   toJSON IssueEntityType = stj "issue"
+
+data ExtractionType
+   = ExtractionTypeNumber
+   | ExtractionTypeText
+   | ExtractionTypeString
+   | ExtractionTypeDate
+   deriving(Show)
+
+instance ToJSON ExtractionType where
+   toJSON ExtractionTypeNumber = stj "number"
+   toJSON ExtractionTypeText = stj "text"
+   toJSON ExtractionTypeString = stj "string"
+   toJSON ExtractionTypeDate = stj "date"
 
 nameToValue :: Name a -> Value
 nameToValue (Name name) = object [ T.pack "value" .= name ]
