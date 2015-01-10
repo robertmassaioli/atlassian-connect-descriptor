@@ -5,7 +5,7 @@ import           AssertionHelpers
 import           Control.Applicative
 import           Data.Aeson
 import           Data.Connect.Descriptor
-import           Data.HashMap.Strict
+import qualified Data.HashMap.Strict     as HM
 import           Data.Maybe              (fromJust)
 import qualified Data.Text               as T
 import           Network.URI
@@ -26,7 +26,7 @@ exampleDescriptor1 = (pluginDescriptor (PluginKey "my-example-connect") baseURL 
     , lifecycle = Just defaultLifecycle
     , modules = Just exampleModules1
     , enableLicensing = Just False
-    , links = fromList
+    , links = HM.fromList
         [ ("documentation", toURI "http://awesome-devs.com/docs")
         , ("source", toURI "http://bitbucket.org/awesome-devs/connect-addon")
         ]
@@ -41,16 +41,20 @@ exampleJIRAModules = emptyJIRAModules
     { jiraWebPanels =
         [ WebPanel
             { wpKey = "test-web-panel"
-            , wpName = Name "Test Web Panel"
+            , wpName = simpleText "Test Web Panel"
             , wpLocation = "some-location-in-jira"
             , wpUrl = "/panel/location/for"
             , wpConditions = [staticJiraCondition UserIsAdminJiraCondition]
+            , wpParams = HM.singleton "single" "ton"
+            , wpTooltip = Just . simpleText $ "A random tooltip here."
+            , wpWeight = Just 2468
+            , wpLayout = Just $ WebPanelLayout (Pixels 963) (Percentage 40)
             }
         ]
     , jiraGeneralPages =
         [ GeneralPage
             { generalPageKey = "test-general-page"
-            , generalPageName = Name "Test General Page"
+            , generalPageName = simpleText "Test General Page"
             , generalPageLocation = Just "some-other-location-in-jira"
             , generalPageWeight = Just 1234
             , generalPageUrl = "/panel/general-page"
@@ -60,6 +64,7 @@ exampleJIRAModules = emptyJIRAModules
                 , iconHeight = Just 40
                 }
             , generalPageConditions = [staticJiraCondition UserHasIssueHistoryJiraCondition]
+            , generalPageParams = HM.empty
             }
         ]
     , jiraWebhooks =
