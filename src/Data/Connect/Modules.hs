@@ -11,9 +11,9 @@ module Data.Connect.Modules
    , WebPanel(..)
    , WebPanelLayout(..)
    , JIRAPage(..)
-   , JIRASearchRequestView(..)
    , JIRAGenericTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
+   , JIRASearchRequestView(..)
    , JIRAReport(..)
    , Target(..)
    , JIRAWorkflowPostFunction(..)
@@ -24,7 +24,40 @@ module Data.Connect.Modules
    , KeyConfiguration(..)
    , Extraction(..)
    , ExtractionType(..)
+   , ModuleParams
+   , noParams
+   , Weight
    ) where
+
+{-
+Supported JIRA Modules
+
+webSections
+webItems
+webPanels
+
+generalPages
+adminPages
+configurePage
+
+jiraProfileTabPanels
+jiraVersionTabPanels
+jiraProjectTabPanels
+jiraProjectAdminTabPanels
+jiraIssueTabPanels
+jiraComponentTabPanels
+
+jiraSearchRequestViews
+
+jiraReports
+
+webhooks
+
+jiraWorkflowPostFunctions
+
+jiraEntityProperties
+
+-}
 
 import           Data.Aeson
 import           Data.Aeson.Types
@@ -62,61 +95,31 @@ instance ToJSON Modules where
 
 -- TODO use Endo Modules to add modules for multiple different products to the modules list
 
-{-
-Supported JIRA Modules
-
-webSections
-webItems
-webPanels
-
-generalPages
-adminPages
-configurePage
-
-jiraProfileTabPanels
-jiraVersionTabPanels
-jiraProjectTabPanels
-jiraProjectAdminTabPanels
-jiraIssueTabPanels
-jiraComponentTabPanels
-
-jiraSearchRequestViews
-
-jiraReports
-
-webhooks
-
-jiraWorkflowPostFunctions
-
-jiraEntityProperties
-
--}
-
 -- | A collection of all of the JIRA Modules that you can define. For more documentation on which Modules are supported
 -- the Atlassian Connect framework please see 'Modules'. You can also find more documentation on each of the modules.
 data JIRAModules = JIRAModules
-   { jiraWebSections               :: [JIRAWebSection]
-   , jiraWebItems                  :: [WebItem]
-   , jiraWebPanels                 :: [WebPanel]
-   , jiraGeneralPages              :: [JIRAPage]
-   , jiraAdminPages                :: [JIRAPage]
-   , jiraConfigurePage             :: Maybe JIRAPage
-   , jiraJiraSearchRequestViews    :: [JIRASearchRequestView]
-   , jiraJiraProfileTabPanels      :: [JIRAGenericTabPanel]
-   , jiraJiraVersionTabPanels      :: [JIRAGenericTabPanel]
-   , jiraJiraProjectTabPanels      :: [JIRAGenericTabPanel]
-   , jiraJiraProjectAdminTabPanels :: [JIRAProjectAdminTabPanel]
-   , jiraJiraIssueTabPanels        :: [JIRAGenericTabPanel]
-   , jiraJiraComponentTabPanels    :: [JIRAGenericTabPanel]
-   , jiraJiraReports               :: [JIRAReport]
-   , jiraWebhooks                  :: [Webhook]
-   , jiraJiraWorkflowPostFunctions :: [JIRAWorkflowPostFunction]
-   , jiraJiraEntityProperties      :: [JIRAEntityProperties]
+   { jmWebSections               :: [JIRAWebSection]
+   , jmWebItems                  :: [WebItem]
+   , jmWebPanels                 :: [WebPanel]
+   , jmGeneralPages              :: [JIRAPage]
+   , jmAdminPages                :: [JIRAPage]
+   , jmConfigurePage             :: Maybe JIRAPage
+   , jmJiraSearchRequestViews    :: [JIRASearchRequestView]
+   , jmJiraProfileTabPanels      :: [JIRAGenericTabPanel]
+   , jmJiraVersionTabPanels      :: [JIRAGenericTabPanel]
+   , jmJiraProjectTabPanels      :: [JIRAGenericTabPanel]
+   , jmJiraProjectAdminTabPanels :: [JIRAProjectAdminTabPanel]
+   , jmJiraIssueTabPanels        :: [JIRAGenericTabPanel]
+   , jmJiraComponentTabPanels    :: [JIRAGenericTabPanel]
+   , jmJiraReports               :: [JIRAReport]
+   , jmWebhooks                  :: [Webhook]
+   , jmJiraWorkflowPostFunctions :: [JIRAWorkflowPostFunction]
+   , jmJiraEntityProperties      :: [JIRAEntityProperties]
    } deriving (Show, Generic)
 
 instance ToJSON JIRAModules where
    toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "jira"
+      { fieldLabelModifier = stripFieldNamePrefix "jm"
       }
 
 -- | A collection of all of the Confluence Modules that you can define. For more documentation on which Modules are supported
@@ -138,17 +141,29 @@ emptyJIRAModules = JIRAModules [] [] [] [] [] Nothing [] [] [] [] [] [] [] [] []
 emptyConfluenceModules :: ConfluenceModules
 emptyConfluenceModules = ConfluenceModules []
 
+-- | Represents the weight of an element in a menu.
 type Weight = Integer
+
+-- | The standard representation for module parameters.
 type ModuleParams = HM.HashMap T.Text T.Text
 
+-- | No parameters. A useful helper when you don't want to pass any parameters to a module.
+noParams :: ModuleParams
+noParams = HM.empty
+
+-- | A 'JIRAWebSection' represents a location in the host application that you can add 'WebItem's to. In this way you
+-- can give your add-on sections to inject content into.
+--
+-- For more information read the Atlassian Connect documentation:
+-- <https://developer.atlassian.com/static/connect/docs/modules/jira/web-section.html>
 data JIRAWebSection = JIRAWebSection
-   { jwsKey        :: T.Text
-   , jwsName       :: I18nText
-   , jwsLocation   :: T.Text
-   , jwsTooltip    :: Maybe I18nText
-   , jwsConditions :: [Condition]
-   , jwsWeight     :: Maybe Weight
-   , jwsParams     :: ModuleParams
+   { jwsKey        :: T.Text -- ^ The add-on unique key for this module.
+   , jwsName       :: I18nText -- ^ The name of this section, likely to appear in the User Interface.
+   , jwsLocation   :: T.Text -- ^ The location in the application interface where the web section should appear.
+   , jwsTooltip    :: Maybe I18nText -- ^ The internationalised text to be used in the link's tooltip.
+   , jwsConditions :: [Condition] -- ^ The conditions under which to show this web section.
+   , jwsWeight     :: Maybe Weight -- ^ The higher the weight the lower down the menu it will appear.
+   , jwsParams     :: ModuleParams -- ^ Optional parameters to pass to the web section.
    } deriving (Show, Generic)
 
 instance ToJSON JIRAWebSection where
@@ -370,14 +385,19 @@ instance ToJSON JIRAPage where
       { fieldLabelModifier = stripFieldNamePrefix "jiraPage"
       }
 
+-- |  A Search Request View allows you to render a custom representation of a search result. Rendering a custom XML
+-- format is a common example.
+--
+-- For more information read the Atlassian Connect documentation:
+-- <https://developer.atlassian.com/static/connect/docs/modules/jira/search-request-view.html>
 data JIRASearchRequestView = JIRASearchRequestView
-   { jsrvKey         :: T.Text
-   , jsrvName        :: I18nText
-   , jsrvUrl         :: T.Text
-   , jsrvDescription :: Maybe I18nText
-   , jsrvWeight      :: Maybe Weight
-   , jsrvConditions  :: [Condition]
-   , jsrvParams      :: ModuleParams
+   { jsrvKey         :: T.Text -- ^ The add-on unique key for this module.
+   , jsrvName        :: I18nText -- ^ The name of this Search Request View. Will appear in the Export menu.
+   , jsrvUrl         :: T.Text -- ^ This URL will render the search results.
+   , jsrvDescription :: Maybe I18nText -- ^ The description of this view.
+   , jsrvWeight      :: Maybe Weight -- ^ A higher weight puts the link further down the export menu.
+   , jsrvConditions  :: [Condition] -- ^ The conditions under which this option should show.
+   , jsrvParams      :: ModuleParams -- ^ The optional parameters to this search request view.
    } deriving (Show, Generic)
 
 instance ToJSON JIRASearchRequestView where
@@ -385,11 +405,32 @@ instance ToJSON JIRASearchRequestView where
       { fieldLabelModifier = stripFieldNamePrefix "jsrv"
       }
 
+-- | A 'JIRAReport' will provide a report on the JIRA issues in the project. It allows you to write custom reporting
+-- for JIRA.
+--
+-- For more information read the Atlassian Connect documentation:
+-- <https://developer.atlassian.com/static/connect/docs/modules/jira/report.html>
+data JIRAReport = JIRAReport
+   { jrKey            :: T.Text -- ^ The add-on unique key for this module.
+   , jrName           :: I18nText -- ^ The user facing name of this report.
+   , jrUrl            :: T.Text -- ^ The URL that will render the report back to the user.
+   , jrDescription    :: I18nText -- ^ The required user facing description of this report.
+   , jrReportCategory :: Maybe JIRAReportCategory -- ^ The category that this report should be placed inside.
+   , jrWeight         :: Maybe Weight -- ^ A higher weight will push this report further down the list of reports.
+   , jrThumbnailUrl   :: Maybe T.Text -- ^ A thumbnail that gives a gist of what this report is supposed to accomplish.
+   } deriving (Show, Generic)
+
+instance ToJSON JIRAReport where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "jr"
+      }
+
+-- | The report category for a 'JIRAReport'. Useful in organising the different types of reports.
 data JIRAReportCategory
-   = AgileRC
-   | IssueAnalysisRC
-   | ForecastManagementRC
-   | OtherRC
+   = AgileRC -- ^ This report is visible to agile customers.
+   | IssueAnalysisRC -- ^ This report does issue analysis.
+   | ForecastManagementRC -- ^ This report considers future of the project state.
+   | OtherRC -- ^ Any report that does not fit into the other categories goes here.
    deriving (Show)
 
 instance ToJSON JIRAReportCategory where
@@ -398,29 +439,22 @@ instance ToJSON JIRAReportCategory where
    toJSON ForecastManagementRC = stj "forecast_management"
    toJSON OtherRC = stj "other"
 
-data JIRAReport = JIRAReport
-   { jrKey            :: T.Text
-   , jrName           :: I18nText
-   , jrUrl            :: T.Text
-   , jrDescription    :: I18nText
-   , jrReportCategory :: Maybe JIRAReportCategory
-   , jrWeight         :: Maybe Weight
-   , jrThumbnailUrl   :: Maybe T.Text
-   } deriving (Show, Generic)
-
-instance ToJSON JIRAReport where
-   toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "jr"
-      }
-
+-- | A 'JIRAWorkflowPostFunction' carries out any additional processing required after a JIRA workflow transition is executed.
+--
+-- For more information read the Atlassian Connect documentation:
+-- <https://developer.atlassian.com/static/connect/docs/modules/jira/workflow-post-function.html>
+--
+-- Or you could read the JIRA documentation on Workflow Post Functions to learn more:
+-- <https://confluence.atlassian.com/display/Cloud/Advanced+Workflow+Configuration#AdvancedWorkflowConfiguration-postfunctions>
 data JIRAWorkflowPostFunction = JIRAWorkflowPostFunction
-   { jwpfKey         :: T.Text
-   , jwpfName        :: I18nText
-   , jwpfTriggered   :: URLBean
-   , jwpfDescription :: Maybe I18nText
-   , jwpfCreate      :: Maybe URLBean
-   , jwpfView        :: Maybe URLBean
-   , jwpfEdit        :: Maybe URLBean
+   { jwpfKey         :: T.Text -- ^ The add-on unique key for this module.
+   , jwpfName        :: I18nText -- ^ The user facing name of this workflow post function.
+   , jwpfTriggered   :: URLBean -- ^ The add-on URL to hit when the post function is triggered. The URL will be POST'ed
+                                -- to and you should read the Atlassian Connect docs for more details.
+   , jwpfDescription :: Maybe I18nText -- ^ The user facing description of this post function.
+   , jwpfCreate      :: Maybe URLBean -- ^ The add-on URL to the configuration page for the post function when it is created.
+   , jwpfEdit        :: Maybe URLBean -- ^ The add-on URL to the configuration edit page of the post function.
+   , jwpfView        :: Maybe URLBean -- ^ The add-on URL to the view page for the read-only view of the configuration.
    } deriving (Show, Generic)
 
 instance ToJSON JIRAWorkflowPostFunction where
@@ -428,11 +462,22 @@ instance ToJSON JIRAWorkflowPostFunction where
       { fieldLabelModifier = stripFieldNamePrefix "jwpf"
       }
 
+-- | 'JIRAEntityProperties' are used to set Key / Value pair information on JIRA Issues that can be searched via JQL and
+-- are indexed by JIRA. The can also be accessed directly via rest api so they allow you to store data in client-only
+-- Atlassian Connect plugins. Very handy!
+--
+-- The data stored as entity properties is in the JSON data format so multiple values can be stored against the one property.
+--
+-- For more information read the JIRA Documentation on the topic:
+-- <https://developer.atlassian.com/display/JIRADEV/JIRA+Entity+Properties+Overview>
+--
+-- Or read the Atlassian Connect documentation on the topic:
+-- <https://developer.atlassian.com/static/connect/docs/modules/jira/entity-property.html>
 data JIRAEntityProperties = JIRAEntityProperties
-   { jepKey               :: T.Text
-   , jepName              :: I18nText
-   , jepEntityType        :: Maybe EntityType
-   , jepKeyConfigurations :: Maybe [KeyConfiguration]
+   { jepKey               :: T.Text -- ^ The add-on unique key for this module.
+   , jepName              :: I18nText -- ^ The user facing name of this entity property.
+   , jepEntityType        :: Maybe EntityType -- ^ The entity type that you want to attach this property to. Issue by default.
+   , jepKeyConfigurations :: [KeyConfiguration] -- ^ The list of key configurations that you wish to define.
    } deriving (Show, Generic)
 
 instance ToJSON JIRAEntityProperties where
@@ -440,9 +485,20 @@ instance ToJSON JIRAEntityProperties where
       { fieldLabelModifier = stripFieldNamePrefix "jep"
       }
 
+-- | An 'EntityType' represents the type of entity that the JIRA Entity Property should be attatched to. By default
+-- entity types are attatched to issues.
+data EntityType = IssueEntityType
+   deriving (Show)
+
+instance ToJSON EntityType where
+   toJSON IssueEntityType = stj "issue"
+
+-- | A 'KeyConfiguration' is the key for this particular property and the JSON flattened paths to the elements that
+-- should be extracted from this property. For more information see the Atlassian Connect documentation:
+-- <https://developer.atlassian.com/static/connect/docs/modules/fragment/index-key-configuration.html>
 data KeyConfiguration = KeyConfiguration
-   { kcPropertyKey :: T.Text
-   , kcExtractions :: [Extraction]
+   { kcPropertyKey :: T.Text -- ^ The name of the JIRA Entity Property
+   , kcExtractions :: [Extraction] -- ^ All of the data extractions from the property that should be indexed.
    } deriving (Show, Generic)
 
 instance ToJSON KeyConfiguration where
@@ -450,6 +506,8 @@ instance ToJSON KeyConfiguration where
       { fieldLabelModifier = stripFieldNamePrefix "kc"
       }
 
+-- | An 'Extraction' represents a snippet of data that should be extracted from a 'KeyConfiguration' such that it is
+-- Indexed by JIRA and capable of being searched in JQL.
 data Extraction = Extraction
    { extractionObjectName :: T.Text
    , extractionType       :: ExtractionType
@@ -460,17 +518,13 @@ instance ToJSON Extraction where
       { fieldLabelModifier = stripFieldNamePrefix "extraction"
       }
 
-data EntityType = IssueEntityType
-   deriving (Show)
-
-instance ToJSON EntityType where
-   toJSON IssueEntityType = stj "issue"
-
+-- | The style in which the data should be extracted and indexed. For example, you may want the data to be treated as a
+-- Date or as a Number.
 data ExtractionType
-   = ExtractionTypeNumber
-   | ExtractionTypeText
-   | ExtractionTypeString
-   | ExtractionTypeDate
+   = ExtractionTypeNumber -- ^ Index the data as a numeric type.
+   | ExtractionTypeText -- ^ Index the data as a text based type, with words.
+   | ExtractionTypeString -- ^ Index the data as an exact string.
+   | ExtractionTypeDate -- ^ Index the data as a Date.
    deriving(Show)
 
 instance ToJSON ExtractionType where

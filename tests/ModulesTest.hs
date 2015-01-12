@@ -42,15 +42,15 @@ testWebPanelCorrectFormat = TestCase $ do
 
 testGeneralPageCorrectFormat :: Test
 testGeneralPageCorrectFormat = TestCase $ do
-    let gp = GeneralPage
-              { generalPageKey = "general-page-key"
-              , generalPageName = simpleText "General Page Name"
-              , generalPageUrl = "/panel/page-panel-name?page_id={page.id}"
-              , generalPageLocation = Just "some-confluence-location"
-              , generalPageIcon = Just $ IconDetails "/path/to/icon" (Just 10) (Just 20)
-              , generalPageWeight = Just 10000
-              , generalPageConditions = [staticJiraCondition IsIssueReportedByCurrentUserJiraCondition]
-              , generalPageParams = HM.fromList [("gpOne", "gp1"), ("gpTwo", "gp2")]
+    let gp = JIRAPage
+              { jiraPageKey = "general-page-key"
+              , jiraPageName = simpleText "General Page Name"
+              , jiraPageUrl = "/panel/page-panel-name?page_id={page.id}"
+              , jiraPageLocation = Just "some-confluence-location"
+              , jiraPageIcon = Just $ IconDetails "/path/to/icon" (Just 10) (Just 20)
+              , jiraPageWeight = Just 10000
+              , jiraPageConditions = [staticJiraCondition IsIssueReportedByCurrentUserJiraCondition]
+              , jiraPageParams = HM.fromList [("gpOne", "gp1"), ("gpTwo", "gp2")]
               }
     let jv = toJSON gp
     isObject jv @? "Expected the web panel to be an object"

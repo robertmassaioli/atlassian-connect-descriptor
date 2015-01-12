@@ -97,6 +97,9 @@ module Data.Connect.Descriptor (
    , URLBean(..)
    , toUrl
    , Length(..)
+   , Weight
+   , ModuleParams
+   , noParams
    -- * Lifecycle
    , Lifecycle(..)
    , emptyLifecycle
@@ -107,17 +110,28 @@ module Data.Connect.Descriptor (
    , emptyJIRAModules
    , ConfluenceModules(..)
    , emptyConfluenceModules
+   -- ** Web Sections, Items and Panels
    , JIRAWebSection(..)
    , WebItem(..)
    , WebPanel(..)
    , WebPanelLayout(..)
+   -- ** JIRA Pages
    , JIRAPage(..)
-   , JIRASearchRequestView(..)
+   -- ** JIRA Tab Panels
    , JIRAGenericTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
+   -- ** JIRA Specific Modules
+   , JIRASearchRequestView(..)
+   , JIRAReport(..)
    , Target(..)
+   , JIRAWorkflowPostFunction(..)
    , DialogOptions(..)
    , InlineDialogOptions(..)
+   , JIRAEntityProperties(..)
+   , EntityType(..)
+   , KeyConfiguration(..)
+   , Extraction(..)
+   , ExtractionType(..)
    -- ** Webhooks
    , Webhook(..)
    , WebhookEvent(..)

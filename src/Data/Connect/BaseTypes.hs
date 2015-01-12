@@ -69,9 +69,11 @@ data IconDetails = IconDetails
 -- specifically. We are just adding type saefty to names.
 data Name a = Name Text deriving (Show, Eq, Generic)
 
+-- | Represents a standard text type in the descriptor than may be Internationalised in the future. However, currently
+-- there is no I18n support: <http://goo.gl/9vJEsW>
 data I18nText = I18nText
-   { dValue :: Text
-   , dI18n  :: Maybe Text
+   { dValue :: Text -- ^ The raw text value that will show.
+   , dI18n  :: Maybe Text -- ^ The potential i18n key that will be used when we eventually have I18n support: <http://goo.gl/9vJEsW>
    } deriving (Show, Generic)
 
 instance ToJSON I18nText where
@@ -79,11 +81,14 @@ instance ToJSON I18nText where
       { fieldLabelModifier = stripFieldNamePrefix "d"
       }
 
+-- | Since there is currently no I18n support (<http://goo.gl/9vJEsW>) we have this helper method to quickly create an 'I18nText' from a standard
+-- 'Text' object.
 simpleText :: Text -> I18nText
 simpleText t = I18nText { dValue = t, dI18n = Nothing }
 
+-- | This represents a URL wrapped as an object instead of as a plain text element.
 data URLBean = URLBean
-   { ubUrl :: Text
+   { ubUrl :: Text -- ^ The raw URL.
    } deriving (Show, Generic)
 
 instance ToJSON URLBean where
@@ -91,6 +96,7 @@ instance ToJSON URLBean where
          { fieldLabelModifier = stripFieldNamePrefix "ub"
          }
 
+-- | Wrap a regular 'Text' based URL inside a URLBean.
 toUrl :: Text -> URLBean
 toUrl = URLBean
 

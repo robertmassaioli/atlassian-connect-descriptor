@@ -39,7 +39,7 @@ exampleModules1 = Modules exampleJIRAModules emptyConfluenceModules
 
 exampleJIRAModules :: JIRAModules
 exampleJIRAModules = emptyJIRAModules
-    { jiraWebPanels =
+    { jmWebPanels =
         [ WebPanel
             { wpKey = "test-web-panel"
             , wpName = simpleText "Test Web Panel"
@@ -52,23 +52,23 @@ exampleJIRAModules = emptyJIRAModules
             , wpLayout = Just $ WebPanelLayout (Pixels 963) (Percentage 40)
             }
         ]
-    , jiraGeneralPages =
-        [ GeneralPage
-            { generalPageKey = "test-general-page"
-            , generalPageName = simpleText "Test General Page"
-            , generalPageLocation = Just "some-other-location-in-jira"
-            , generalPageWeight = Just 1234
-            , generalPageUrl = "/panel/general-page"
-            , generalPageIcon = Just IconDetails
+    , jmGeneralPages =
+        [ JIRAPage
+            { jiraPageKey = "test-general-page"
+            , jiraPageName = simpleText "Test General Page"
+            , jiraPageLocation = Just "some-other-location-in-jira"
+            , jiraPageWeight = Just 1234
+            , jiraPageUrl = "/panel/general-page"
+            , jiraPageIcon = Just IconDetails
                 { iconUrl = "/static/path/to/icon.png"
                 , iconWidth = Just 20
                 , iconHeight = Just 40
                 }
-            , generalPageConditions = [staticJiraCondition UserHasIssueHistoryJiraCondition]
-            , generalPageParams = HM.empty
+            , jiraPageConditions = [staticJiraCondition UserHasIssueHistoryJiraCondition]
+            , jiraPageParams = HM.empty
             }
         ]
-    , jiraWebhooks =
+    , jmWebhooks =
         [ Webhook
             { webhookEvent = JiraIssueDeleted
             , webhookUrl = "/webhook/handle-deletion"
