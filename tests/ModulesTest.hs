@@ -8,6 +8,7 @@ import           Data.Connect.BaseTypes
 import           Data.Connect.Conditions (JIRACondition (..),
                                           staticJiraCondition)
 import           Data.Connect.Modules
+import qualified Data.HashMap.Strict     as HM
 import           Test.HUnit
 import           ValueExtractors
 
@@ -22,10 +23,14 @@ testWebPanelCorrectFormat :: Test
 testWebPanelCorrectFormat = TestCase $ do
     let wp = WebPanel
               { wpKey = "web-panel-key"
-              , wpName = Name "My web panel"
+              , wpName = simpleText "My web panel"
               , wpUrl = "/panel/my-panel?issue_key={issue.key}"
               , wpLocation = "atl.jira.view.issue.right.context"
               , wpConditions = [staticJiraCondition UserIsAdminJiraCondition]
+              , wpTooltip = Just . simpleText $ "A tooltip for the web panel..."
+              , wpWeight = Just 1234
+              , wpLayout = Just $ WebPanelLayout (Pixels 321) (Percentage 80)
+              , wpParams = HM.fromList [("one", "1"), ("two", "2")]
               }
     let jv = toJSON wp
     isObject jv @? "Expected the web panel to be an object"
@@ -37,14 +42,15 @@ testWebPanelCorrectFormat = TestCase $ do
 
 testGeneralPageCorrectFormat :: Test
 testGeneralPageCorrectFormat = TestCase $ do
-    let gp = GeneralPage
-              { generalPageKey = "general-page-key"
-              , generalPageName = Name "General Page Name"
-              , generalPageUrl = "/panel/page-panel-name?page_id={page.id}"
-              , generalPageLocation = Just "some-confluence-location"
-              , generalPageIcon = Just $ IconDetails "/path/to/icon" (Just 10) (Just 20)
-              , generalPageWeight = Just 10000
-              , generalPageConditions = [staticJiraCondition IsIssueReportedByCurrentUserJiraCondition]
+    let gp = JIRAPage
+              { jiraPageKey = "general-page-key"
+              , jiraPageName = simpleText "General Page Name"
+              , jiraPageUrl = "/panel/page-panel-name?page_id={page.id}"
+              , jiraPageLocation = Just "some-confluence-location"
+              , jiraPageIcon = Just $ IconDetails "/path/to/icon" (Just 10) (Just 20)
+              , jiraPageWeight = Just 10000
+              , jiraPageConditions = [staticJiraCondition IsIssueReportedByCurrentUserJiraCondition]
+              , jiraPageParams = HM.fromList [("gpOne", "gp1"), ("gpTwo", "gp2")]
               }
     let jv = toJSON gp
     isObject jv @? "Expected the web panel to be an object"

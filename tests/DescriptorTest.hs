@@ -5,12 +5,13 @@ import           AssertionHelpers
 import           Control.Applicative
 import           Data.Aeson
 import           Data.Connect.Descriptor
-import           Data.HashMap.Strict
+import qualified Data.HashMap.Strict     as HM
 import           Data.Maybe              (fromJust)
 import qualified Data.Text               as T
 import           Network.URI
 import           Test.HUnit
 import           ValueExtractors
+import qualified Data.ByteString.Lazy.Char8 as BLC
 
 toURI :: String -> URI
 toURI = fromJust . parseURI
@@ -26,7 +27,7 @@ exampleDescriptor1 = (pluginDescriptor (PluginKey "my-example-connect") baseURL 
     , lifecycle = Just defaultLifecycle
     , modules = Just exampleModules1
     , enableLicensing = Just False
-    , links = fromList
+    , links = HM.fromList
         [ ("documentation", toURI "http://awesome-devs.com/docs")
         , ("source", toURI "http://bitbucket.org/awesome-devs/connect-addon")
         ]
@@ -38,31 +39,36 @@ exampleModules1 = Modules exampleJIRAModules emptyConfluenceModules
 
 exampleJIRAModules :: JIRAModules
 exampleJIRAModules = emptyJIRAModules
-    { jiraWebPanels =
+    { jmWebPanels =
         [ WebPanel
             { wpKey = "test-web-panel"
-            , wpName = Name "Test Web Panel"
+            , wpName = simpleText "Test Web Panel"
             , wpLocation = "some-location-in-jira"
             , wpUrl = "/panel/location/for"
             , wpConditions = [staticJiraCondition UserIsAdminJiraCondition]
+            , wpParams = HM.singleton "single" "ton"
+            , wpTooltip = Just . simpleText $ "A random tooltip here."
+            , wpWeight = Just 2468
+            , wpLayout = Just $ WebPanelLayout (Pixels 963) (Percentage 40)
             }
         ]
-    , jiraGeneralPages =
-        [ GeneralPage
-            { generalPageKey = "test-general-page"
-            , generalPageName = Name "Test General Page"
-            , generalPageLocation = Just "some-other-location-in-jira"
-            , generalPageWeight = Just 1234
-            , generalPageUrl = "/panel/general-page"
-            , generalPageIcon = Just IconDetails
+    , jmGeneralPages =
+        [ JIRAPage
+            { jiraPageKey = "test-general-page"
+            , jiraPageName = simpleText "Test General Page"
+            , jiraPageLocation = Just "some-other-location-in-jira"
+            , jiraPageWeight = Just 1234
+            , jiraPageUrl = "/panel/general-page"
+            , jiraPageIcon = Just IconDetails
                 { iconUrl = "/static/path/to/icon.png"
                 , iconWidth = Just 20
                 , iconHeight = Just 40
                 }
-            , generalPageConditions = [staticJiraCondition UserHasIssueHistoryJiraCondition]
+            , jiraPageConditions = [staticJiraCondition UserHasIssueHistoryJiraCondition]
+            , jiraPageParams = HM.empty
             }
         ]
-    , jiraWebhooks =
+    , jmWebhooks =
         [ Webhook
             { webhookEvent = JiraIssueDeleted
             , webhookUrl = "/webhook/handle-deletion"
@@ -78,6 +84,7 @@ descriptorTests = TestList
 basicDescriptorTest :: Test
 basicDescriptorTest = TestCase $ do
     let jv = toJSON exampleDescriptor1
+    BLC.putStrLn . encode $ exampleDescriptor1
     isObject jv @? "Expect the descriptor to be one big json object."
     (getString =<< get "key" jv) `isEqualTo` "my-example-connect"
     (getString =<< get "baseUrl" jv) `isEqualTo` (T.pack . show $ baseURL)

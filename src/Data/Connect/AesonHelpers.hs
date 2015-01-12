@@ -2,6 +2,7 @@ module Data.Connect.AesonHelpers
    ( baseOptions
    , stripFieldNamePrefix
    , dropSuffixAndSnakeCase
+   , lowerAll
    ) where
 
 import qualified Cases            as CS
@@ -25,6 +26,9 @@ dropSuffixAndSnakeCase suffix = T.unpack . CS.process CS.lower CS.snake . T.pack
 lowerFirst :: String -> String
 lowerFirst (x : xs) = C.toLower x : xs
 lowerFirst [] = []
+
+lowerAll :: String -> String
+lowerAll = fmap C.toLower
 
 dropSuffix :: String -> String -> String
 dropSuffix suffix = reverse . try (L.stripPrefix . reverse $ suffix) . reverse

@@ -31,7 +31,7 @@ function from the Aeson library. For example, here in an example Atlassian Conne
 >     , lifecycle = Just defaultLifecycle
 >     , modules = Just exampleModules
 >     , enableLicensing = Just False
->     , links = fromList
+>     , links = HM.fromList
 >         [ ("documentation", toURI "http://awesome-devs.com/docs")
 >         , ("source", toURI "http://bitbucket.org/awesome-devs/connect-addon")
 >         ]
@@ -43,31 +43,36 @@ function from the Aeson library. For example, here in an example Atlassian Conne
 >
 > exampleJIRAModules :: JIRAModules
 > exampleJIRAModules = emptyJIRAModules
->     { jiraWebPanels =
+>     { jmWebPanels =
 >         [ WebPanel
 >             { wpKey = "test-web-panel"
->             , wpName = Name "Test Web Panel"
+>             , wpName = simpleText "Test Web Panel"
+>             , wpTooltip = Just $ simpleText "This is a test web panel..."
 >             , wpLocation = "some-location-in-jira"
 >             , wpUrl = "/panel/location/for"
 >             , wpConditions = [staticJiraCondition UserIsAdminJiraCondition]
+>             , wpWeight = Nothing
+>             , wpLayout = Nothing
+>             , wpParams = noParams
 >             }
 >         ]
->     , jiraGeneralPages =
->         [ GeneralPage
->             { generalPageKey = "test-general-page"
->             , generalPageName = Name "Test General Page"
->             , generalPageLocation = Just "some-other-location-in-jira"
->             , generalPageWeight = Just 1234
->             , generalPageUrl = "/panel/general-page"
->             , generalPageIcon = Just IconDetails
+>     , jmGeneralPages =
+>         [ JIRAPage
+>             { jiraPageKey = "test-general-page"
+>             , jiraPageName = simpleText "Test General Page"
+>             , jiraPageLocation = Just "some-other-location-in-jira"
+>             , jiraPageWeight = Just 1234
+>             , jiraPageUrl = "/panel/general-page"
+>             , jiraPageIcon = Just IconDetails
 >                 { iconUrl = "/static/path/to/icon.png"
 >                 , iconWidth = Just 20
 >                 , iconHeight = Just 40
 >                 }
->             , generalPageConditions = [staticJiraCondition UserHasIssueHistoryJiraCondition]
+>             , jiraPageConditions = [staticJiraCondition UserHasIssueHistoryJiraCondition]
+>             , jiraPageParams = noParams
 >             }
 >         ]
->     , jiraWebhooks =
+>     , jmWebhooks =
 >         [ Webhook
 >             { webhookEvent = JiraIssueDeleted
 >             , webhookUrl = "/webhook/handle-deletion"
@@ -84,17 +89,22 @@ module Data.Connect.Descriptor (
      Plugin(..)
    , pluginDescriptor
    -- * Basic Types
-   , Name(..)
    , Key(..)
    , PluginKey(..)
    , Timeout(..)
-   , IconDetails(..)
-   , Length(..)
-   -- * Authentication
+   , Vendor(..)
    , Authentication(..)
    , AuthType(..)
-   -- * Vendor Details
-   , Vendor(..)
+   , IconDetails(..)
+   , Name(..)
+   , I18nText(..)
+   , simpleText
+   , URLBean(..)
+   , toUrl
+   , Length(..)
+   , Weight
+   , ModuleParams
+   , noParams
    -- * Lifecycle
    , Lifecycle(..)
    , emptyLifecycle
@@ -105,10 +115,28 @@ module Data.Connect.Descriptor (
    , emptyJIRAModules
    , ConfluenceModules(..)
    , emptyConfluenceModules
+   -- ** Web Sections, Items and Panels
+   , JIRAWebSection(..)
+   , WebItem(..)
    , WebPanel(..)
    , WebPanelLayout(..)
-   , GeneralPage(..)
+   -- ** JIRA Pages
+   , JIRAPage(..)
+   -- ** JIRA Tab Panels
+   , JIRAGenericTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
+   -- ** JIRA Specific Modules
+   , JIRASearchRequestView(..)
+   , JIRAReport(..)
+   , Target(..)
+   , JIRAWorkflowPostFunction(..)
+   , DialogOptions(..)
+   , InlineDialogOptions(..)
+   , JIRAEntityProperties(..)
+   , EntityType(..)
+   , KeyConfiguration(..)
+   , Extraction(..)
+   , ExtractionType(..)
    -- ** Webhooks
    , Webhook(..)
    , WebhookEvent(..)

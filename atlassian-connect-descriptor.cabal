@@ -10,7 +10,7 @@ name:                atlassian-connect-descriptor
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             0.2.0.1
+version:             0.3.0.0
 
 -- A short (one-line) description of the package.
 synopsis:            Code that helps you create a valid Atlassian Connect Descriptor.
@@ -45,6 +45,10 @@ extra-source-files:  README.markdown
 
 -- Constraint on the version of Cabal needed to build this package.
 cabal-version:       >=1.10
+
+source-repository head
+  type:     git
+  location: git@bitbucket.org:robertmassaioli/atlassian-connect-descriptor.git
 
 flag network-uri
    description: Get Network.URI from the network-uri package
@@ -119,6 +123,7 @@ Test-Suite test-descriptor
     , time-units
     , cases
     , unordered-containers
+    , bytestring
 
   if flag(network-uri)
      build-depends: network-uri >= 2.6, network >= 2.6
