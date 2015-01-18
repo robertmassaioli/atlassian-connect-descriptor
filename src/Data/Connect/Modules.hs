@@ -8,6 +8,7 @@ module Data.Connect.Modules
    , emptyConfluenceModules
    , JIRAWebSection(..)
    , WebItem(..)
+   , WebItemContext(..)
    , WebPanel(..)
    , WebPanelLayout(..)
    , JIRAPage(..)
@@ -15,6 +16,7 @@ module Data.Connect.Modules
    , JIRAProjectAdminTabPanel(..)
    , JIRASearchRequestView(..)
    , JIRAReport(..)
+   , JIRAReportCategory(..)
    , Target(..)
    , JIRAWorkflowPostFunction(..)
    , DialogOptions(..)

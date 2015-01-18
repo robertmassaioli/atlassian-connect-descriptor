@@ -118,6 +118,7 @@ module Data.Connect.Descriptor (
    -- ** Web Sections, Items and Panels
    , JIRAWebSection(..)
    , WebItem(..)
+   , WebItemContext(..)
    , WebPanel(..)
    , WebPanelLayout(..)
    -- ** JIRA Pages
@@ -128,6 +129,7 @@ module Data.Connect.Descriptor (
    -- ** JIRA Specific Modules
    , JIRASearchRequestView(..)
    , JIRAReport(..)
+   , JIRAReportCategory(..)
    , Target(..)
    , JIRAWorkflowPostFunction(..)
    , DialogOptions(..)
