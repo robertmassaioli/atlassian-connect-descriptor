@@ -10,7 +10,7 @@ name:                atlassian-connect-descriptor
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             0.3.0.1
+version:             0.4.0.0
 
 -- A short (one-line) description of the package.
 synopsis:            Code that helps you create a valid Atlassian Connect Descriptor.
