@@ -16,7 +16,7 @@ moduleTests :: Test
 moduleTests = TestList
     [ testWebPanelCorrectFormat
     , testGeneralPageCorrectFormat
-    , testEmptyModulesAreShown
+    , testEmptyModulesAreNotShown
     ]
 
 testWebPanelCorrectFormat :: Test
@@ -65,9 +65,9 @@ testGeneralPageCorrectFormat = TestCase $ do
     (getNumber =<< get "weight" jv) `isEqualTo` 10000
     (isArray <$> get "conditions" jv) @? "Expected the conditions to be present."
 
-testEmptyModulesAreShown :: Test
-testEmptyModulesAreShown = TestCase $ do
+testEmptyModulesAreNotShown :: Test
+testEmptyModulesAreNotShown = TestCase $ do
     let modules = Modules emptyJIRAModules emptyConfluenceModules
     let jv = toJSON modules
-    fieldIsPresent "webPanels" jv @? "Expected the field webPanels to be present"
-    fieldIsPresent "generalPages" jv @? "Expected the field webPanels to be present"
+    fieldIsNotPresent "webPanels" jv @? "Expected the field webPanels to be present"
+    fieldIsNotPresent "generalPages" jv @? "Expected the field webPanels to be present"

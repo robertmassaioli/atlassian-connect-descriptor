@@ -100,23 +100,23 @@ instance ToJSON Modules where
 -- | A collection of all of the JIRA Modules that you can define. For more documentation on which Modules are supported
 -- the Atlassian Connect framework please see 'Modules'. You can also find more documentation on each of the modules.
 data JIRAModules = JIRAModules
-   { jmWebSections               :: [JIRAWebSection]
-   , jmWebItems                  :: [WebItem]
-   , jmWebPanels                 :: [WebPanel]
-   , jmGeneralPages              :: [JIRAPage]
-   , jmAdminPages                :: [JIRAPage]
+   { jmWebSections               :: Maybe [JIRAWebSection]
+   , jmWebItems                  :: Maybe [WebItem]
+   , jmWebPanels                 :: Maybe [WebPanel]
+   , jmGeneralPages              :: Maybe [JIRAPage]
+   , jmAdminPages                :: Maybe [JIRAPage]
    , jmConfigurePage             :: Maybe JIRAPage
-   , jmJiraSearchRequestViews    :: [JIRASearchRequestView]
-   , jmJiraProfileTabPanels      :: [JIRAGenericTabPanel]
-   , jmJiraVersionTabPanels      :: [JIRAGenericTabPanel]
-   , jmJiraProjectTabPanels      :: [JIRAGenericTabPanel]
-   , jmJiraProjectAdminTabPanels :: [JIRAProjectAdminTabPanel]
-   , jmJiraIssueTabPanels        :: [JIRAGenericTabPanel]
-   , jmJiraComponentTabPanels    :: [JIRAGenericTabPanel]
-   , jmJiraReports               :: [JIRAReport]
-   , jmWebhooks                  :: [Webhook]
-   , jmJiraWorkflowPostFunctions :: [JIRAWorkflowPostFunction]
-   , jmJiraEntityProperties      :: [JIRAEntityProperties]
+   , jmJiraSearchRequestViews    :: Maybe [JIRASearchRequestView]
+   , jmJiraProfileTabPanels      :: Maybe [JIRAGenericTabPanel]
+   , jmJiraVersionTabPanels      :: Maybe [JIRAGenericTabPanel]
+   , jmJiraProjectTabPanels      :: Maybe [JIRAGenericTabPanel]
+   , jmJiraProjectAdminTabPanels :: Maybe [JIRAProjectAdminTabPanel]
+   , jmJiraIssueTabPanels        :: Maybe [JIRAGenericTabPanel]
+   , jmJiraComponentTabPanels    :: Maybe [JIRAGenericTabPanel]
+   , jmJiraReports               :: Maybe [JIRAReport]
+   , jmWebhooks                  :: Maybe [Webhook]
+   , jmJiraWorkflowPostFunctions :: Maybe [JIRAWorkflowPostFunction]
+   , jmJiraEntityProperties      :: Maybe [JIRAEntityProperties]
    } deriving (Show, Generic)
 
 instance ToJSON JIRAModules where
@@ -127,7 +127,7 @@ instance ToJSON JIRAModules where
 -- | A collection of all of the Confluence Modules that you can define. For more documentation on which Modules are supported
 -- the Atlassian Connect framework please see 'Modules'. You can also find more documentation on each of the modules.
 data ConfluenceModules = ConfluenceModules
-   { confluenceWebPanels :: [WebPanel]
+   { confluenceWebPanels :: Maybe [WebPanel]
    } deriving (Show, Generic)
 
 instance ToJSON ConfluenceModules where
@@ -137,11 +137,29 @@ instance ToJSON ConfluenceModules where
 
 -- | Empty JIRA Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyJIRAModules :: JIRAModules
-emptyJIRAModules = JIRAModules [] [] [] [] [] Nothing [] [] [] [] [] [] [] [] [] [] []
+emptyJIRAModules
+   = JIRAModules
+      Nothing
+      Nothing
+      Nothing
+      Nothing
+      Nothing
+      Nothing
+      Nothing
+      Nothing
+      Nothing
+      Nothing
+      Nothing
+      Nothing
+      Nothing
+      Nothing
+      Nothing
+      Nothing
+      Nothing
 
 -- | Empty Confluence Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyConfluenceModules :: ConfluenceModules
-emptyConfluenceModules = ConfluenceModules []
+emptyConfluenceModules = ConfluenceModules Nothing
 
 -- | Represents the weight of an element in a menu.
 type Weight = Integer
