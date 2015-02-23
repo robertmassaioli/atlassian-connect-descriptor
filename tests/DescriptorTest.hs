@@ -39,7 +39,7 @@ exampleModules1 = Modules exampleJIRAModules emptyConfluenceModules
 
 exampleJIRAModules :: JIRAModules
 exampleJIRAModules = emptyJIRAModules
-    { jmWebPanels =
+    { jmWebPanels = Just
         [ WebPanel
             { wpKey = "test-web-panel"
             , wpName = simpleText "Test Web Panel"
@@ -52,7 +52,7 @@ exampleJIRAModules = emptyJIRAModules
             , wpLayout = Just $ WebPanelLayout (Pixels 963) (Percentage 40)
             }
         ]
-    , jmGeneralPages =
+    , jmGeneralPages = Just
         [ JIRAPage
             { jiraPageKey = "test-general-page"
             , jiraPageName = simpleText "Test General Page"
@@ -68,7 +68,7 @@ exampleJIRAModules = emptyJIRAModules
             , jiraPageParams = HM.empty
             }
         ]
-    , jmWebhooks =
+    , jmWebhooks = Just
         [ Webhook
             { webhookEvent = JiraIssueDeleted
             , webhookUrl = "/webhook/handle-deletion"

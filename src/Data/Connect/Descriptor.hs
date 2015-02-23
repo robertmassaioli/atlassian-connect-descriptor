@@ -43,7 +43,7 @@ function from the Aeson library. For example, here in an example Atlassian Conne
 >
 > exampleJIRAModules :: JIRAModules
 > exampleJIRAModules = emptyJIRAModules
->     { jmWebPanels =
+>     { jmWebPanels = Just
 >         [ WebPanel
 >             { wpKey = "test-web-panel"
 >             , wpName = simpleText "Test Web Panel"
@@ -56,7 +56,7 @@ function from the Aeson library. For example, here in an example Atlassian Conne
 >             , wpParams = noParams
 >             }
 >         ]
->     , jmGeneralPages =
+>     , jmGeneralPages = Just
 >         [ JIRAPage
 >             { jiraPageKey = "test-general-page"
 >             , jiraPageName = simpleText "Test General Page"
@@ -72,7 +72,7 @@ function from the Aeson library. For example, here in an example Atlassian Conne
 >             , jiraPageParams = noParams
 >             }
 >         ]
->     , jmWebhooks =
+>     , jmWebhooks = Just
 >         [ Webhook
 >             { webhookEvent = JiraIssueDeleted
 >             , webhookUrl = "/webhook/handle-deletion"
