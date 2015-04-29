@@ -188,7 +188,7 @@ data JIRAWebSection = JIRAWebSection
 
 instance ToJSON JIRAWebSection where
    toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "tt"
+      { fieldLabelModifier = stripFieldNamePrefix "jws"
       }
 
 -- | A 'WebPanel' is an injectable segment of the host application that you can place content inside. Currently the
