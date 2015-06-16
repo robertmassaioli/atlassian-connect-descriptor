@@ -128,6 +128,7 @@ instance ToJSON JIRAModules where
 -- the Atlassian Connect framework please see 'Modules'. You can also find more documentation on each of the modules.
 data ConfluenceModules = ConfluenceModules
    { confluenceWebPanels :: Maybe [WebPanel]
+   , confluenceWebItems  :: Maybe [WebItem]
    } deriving (Show, Generic)
 
 instance ToJSON ConfluenceModules where
@@ -159,7 +160,7 @@ emptyJIRAModules
 
 -- | Empty Confluence Modules; useful when you only want to define a few modules via Haskell record syntax.
 emptyConfluenceModules :: ConfluenceModules
-emptyConfluenceModules = ConfluenceModules Nothing
+emptyConfluenceModules = ConfluenceModules Nothing Nothing
 
 -- | Represents the weight of an element in a menu.
 type Weight = Integer
