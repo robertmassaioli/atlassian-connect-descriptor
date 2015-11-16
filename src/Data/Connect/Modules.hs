@@ -532,7 +532,7 @@ instance ToJSON KeyConfiguration where
 data Extraction = Extraction
    { extractionObjectName :: T.Text -- ^ The json path to the data in the json data stored in this property.
    , extractionType       :: ExtractionType -- ^ The type of data contained in this extraction. Arrays are automatically handled.
-   , extractionAlias      :: T.Text -- ^ The alias for this extraction to use in JQL queries.
+   , extractionAlias      :: Maybe T.Text -- ^ The alias for this extraction to use in JQL queries.
    } deriving (Show, Generic)
 
 instance ToJSON Extraction where
