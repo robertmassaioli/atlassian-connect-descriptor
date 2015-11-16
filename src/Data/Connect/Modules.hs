@@ -530,8 +530,9 @@ instance ToJSON KeyConfiguration where
 -- | An 'Extraction' represents a snippet of data that should be extracted from a 'KeyConfiguration' such that it is
 -- Indexed by JIRA and capable of being searched in JQL.
 data Extraction = Extraction
-   { extractionObjectName :: T.Text
-   , extractionType       :: ExtractionType
+   { extractionObjectName :: T.Text -- ^ The json path to the data in the json data stored in this property.
+   , extractionType       :: ExtractionType -- ^ The type of data contained in this extraction. Arrays are automatically handled.
+   , extractionAlias      :: Maybe T.Text -- ^ The alias for this extraction to use in JQL queries.
    } deriving (Show, Generic)
 
 instance ToJSON Extraction where
