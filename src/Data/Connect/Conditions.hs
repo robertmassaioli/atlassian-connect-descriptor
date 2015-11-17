@@ -112,6 +112,7 @@ instance ToJSON ConditionSource where
 data JIRACondition
    = CanAttachFileToIssueJiraCondition
    | CanManageAttachmentsJiraCondition
+   | EntityPropertyEqualToJiraCondition
    | FeatureFlagJiraCondition
    | HasIssuePermissionJiraCondition
    | HasProjectPermissionJiraCondition -- ^ Returns true if there is a selected project and the user has project admin to it.
