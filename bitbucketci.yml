@@ -7,5 +7,7 @@ pipeline:
       script:
         - cabal sandbox init
         - cabal update
-        - cabal install --enable-tests
+        - cabal configure --enable-tests
+        - cabal install --enable-tests --only-dependencies
+        - cabal build
         - cabal test
