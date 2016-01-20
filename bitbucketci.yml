@@ -1,10 +1,10 @@
 # This is a sample build configuration for Javascript.
 # Do not use tabs to indent your configuration
-# You can specify a custom docker image from Dockerhub# for your build environment
+# You can specify a custom docker image from Dockerhub# for your build environment      
 image: haskell:latest
 pipeline:
-  - job:        
-    script: 
-      - cabal sandbox init
-      - cabal update
-      - cabal install
+  - job:
+      script:
+        - cabal sandbox init
+        - cabal update
+        - cabal install
