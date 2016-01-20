@@ -1,4 +1,4 @@
-# This is a sample build configuration for Javascript.
+# This is a sample build configuration for Haskell.
 # Do not use tabs to indent your configuration
 # You can specify a custom docker image from Dockerhub# for your build environment      
 image: haskell:latest
