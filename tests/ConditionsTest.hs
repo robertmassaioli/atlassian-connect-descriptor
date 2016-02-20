@@ -91,12 +91,11 @@ remoteConditionJsonCorrect = TestCase $ do
 -- CompositeCondition's are rendered correctly
 compositeAndConditionConnect :: Test
 compositeAndConditionConnect = TestCase $ do
-    let condition = CompositeCondition threeChildConditions AndCondition
+    let condition = CompositeCondition threeChildConditions OrCondition
     let jsonValue = toJSON condition
     isObject jsonValue @? "Expect the conditions in an object."
-    conditions <- getArray =<< get "conditions" jsonValue
+    conditions <- getArray =<< get "or" jsonValue
     sequence (fmap (getString <=< get "condition") conditions) `isEqualTo` ["user_has_issue_history","is_watching_issue","has_voted_for_issue"]
-    get "type" jsonValue `isEqualTo` "AND"
 
 conditionParamsTest :: Test
 conditionParamsTest = TestCase $ do

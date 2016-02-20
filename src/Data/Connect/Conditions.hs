@@ -67,7 +67,10 @@ instance ToJSON Condition where
       , "invert" .= conditionInverted sc
       , "params" .= conditionParams sc
       ]
-   toJSON cc@(CompositeCondition {}) = object [ "conditions" .= subConditions cc, "type" .= conditionType cc]
+   toJSON cc@(CompositeCondition {}) = object [ compositionConditionKey cc .= subConditions cc]
+
+compositionConditionKey (CompositeCondition _ AndCondition) = "and"
+compositionConditionKey (CompositeCondition _ OrCondition) = "or"
 
 -- | Composite Conditions can be joined together to behave as a single condition. The way that you can join them together
 -- is decided by the condition type.
