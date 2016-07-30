@@ -174,4 +174,3 @@ instance ToJSON WebhookEvent where
    toJSON ConfluenceUserRemoved = "user_removed"
    toJSON ConfluenceGroupCreated = "group_created"
    toJSON ConfluenceGroupRemoved = "group_removed"
-   toJSON ServerUpgraded = String "server_upgraded"
