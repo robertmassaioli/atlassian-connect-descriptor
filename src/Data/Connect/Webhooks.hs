@@ -38,10 +38,23 @@ data WebhookEvent
    | JiraIssueDeleted
    | JiraIssueUpdated
    | JiraWorklogUpdated
+   | JiraVersionCreated
+   | JiraVersionDeleted
+   | JiraVersionMerged
+   | JiraVersionUpdated
+   | JiraVersionMoved
+   | JiraVersionReleased
+   | JiraVersionUnreleased
+   | JiraProjectCreated
+   | JiraProjectUpdated
+   | JiraProjectDeleted
    | JiraPluginEnabled
    | JiraPluginsUpgraded
    | JiraRemoteIssueLinkAggregateClearedEvent
    | JiraRemoteWorkflowPostFunction
+   | JiraUserCreated
+   | JiraUserDeleted
+   | JiraUserUpdated
    | ConfluenceAttachmentCreated
    | ConfluenceAttachmentRemoved
    | ConfluenceAttachmentUpdated
@@ -88,7 +101,6 @@ data WebhookEvent
    | ConfluenceUserRemoved
    | ConfluenceGroupCreated
    | ConfluenceGroupRemoved
-   | ServerUpgraded
    deriving (Show)
 
 instance ToJSON WebhookEvent where
@@ -101,6 +113,16 @@ instance ToJSON WebhookEvent where
    toJSON JiraWorklogUpdated = String "jira:worklog_updated"
    toJSON JiraPluginEnabled = String "plugin_enabled"
    toJSON JiraPluginsUpgraded = String "plugins_upgraded"
+   toJSON JiraVersionCreated = String "jira:version_created"
+   toJSON JiraVersionDeleted = String "jira:version_deleted"
+   toJSON JiraVersionMerged = String "jira:version_merged"
+   toJSON JiraVersionUpdated = String "jira:version_updated"
+   toJSON JiraVersionMoved = String "jira:version_moved"
+   toJSON JiraVersionReleased = String "jira:version_released"
+   toJSON JiraVersionUnreleased = String "jira:version_unreleased"
+   toJSON JiraProjectCreated = String "jira:project_created"
+   toJSON JiraProjectUpdated = String "jira:project_updated"
+   toJSON JiraProjectDeleted = String "jira:project_deleted"
    toJSON JiraRemoteIssueLinkAggregateClearedEvent = String "remote_issue_link_aggregate_cleared_event"
    toJSON JiraRemoteWorkflowPostFunction = String "remote_workflow_post_function"
    toJSON ConfluenceAttachmentCreated = "attachment_created"
