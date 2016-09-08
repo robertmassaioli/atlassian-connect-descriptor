@@ -10,7 +10,7 @@ name:                atlassian-connect-descriptor
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             0.4.4.0
+version:             0.4.4.1
 
 -- A short (one-line) description of the package.
 synopsis:            Code that helps you create a valid Atlassian Connect Descriptor.
@@ -92,7 +92,7 @@ library
   ghc-options: -Wall
 
 Test-Suite test-descriptor
-  hs-source-dirs: tests, src
+  hs-source-dirs: tests
   type:        detailed-0.9
 
   test-module: Test
@@ -102,18 +102,10 @@ Test-Suite test-descriptor
                  , ConditionsTest
                  , ModulesTest
                  , DescriptorTest
-                 , Data.Connect.Descriptor
-                 , Data.Connect.AesonHelpers
-                 , Data.Connect.BaseTypes
-                 , Data.Connect.Conditions
-                 , Data.Connect.Lifecycle
-                 , Data.Connect.Modules
-                 , Data.Connect.OrphanInstances
-                 , Data.Connect.Scopes
-                 , Data.Connect.Webhooks
 
   build-depends:
     base
+    , atlassian-connect-descriptor
     , Cabal >= 1.20
     , HUnit
     , vector

@@ -4,10 +4,7 @@ module ModulesTest (moduleTests) where
 import           AssertionHelpers
 import           Control.Applicative
 import           Data.Aeson
-import           Data.Connect.BaseTypes
-import           Data.Connect.Conditions (JIRACondition (..),
-                                          staticJiraCondition)
-import           Data.Connect.Modules
+import           Data.Connect.Descriptor
 import qualified Data.HashMap.Strict     as HM
 import           Test.HUnit
 import           ValueExtractors

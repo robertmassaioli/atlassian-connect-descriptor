@@ -4,7 +4,7 @@ module ConditionsTest (conditionsTests) where
 import           AssertionHelpers
 import           Control.Monad
 import           Data.Aeson
-import           Data.Connect.Conditions
+import           Data.Connect.Descriptor
 import qualified Data.Text               as T
 import           Test.HUnit
 import           ValueExtractors
