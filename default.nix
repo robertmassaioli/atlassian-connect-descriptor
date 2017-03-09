@@ -1,4 +1,4 @@
-{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc7103" }:
+{ nixpkgs ? import <nixpkgs> {}, compiler ? "default" }:
 
 let
 
@@ -6,21 +6,20 @@ let
 
   f = { mkDerivation, aeson, base, bytestring, Cabal, cases, HUnit
       , network, network-uri, scientific, stdenv, text, time-units
-      , unordered-containers, vector
+      , unordered-containers, vector, cabal-install
       }:
       mkDerivation {
         pname = "atlassian-connect-descriptor";
-        version = "0.4.4.0";
+        version = "0.4.4.2";
         src = ./.;
         libraryHaskellDepends = [
           aeson base cases network network-uri text time-units
-          unordered-containers
+          unordered-containers cabal-install
         ];
         testHaskellDepends = [
           aeson base bytestring Cabal cases HUnit network network-uri
           scientific text time-units unordered-containers vector
         ];
-        doHaddock = false;
         doCheck = false;
         description = "Code that helps you create a valid Atlassian Connect Descriptor";
         license = stdenv.lib.licenses.asl20;
