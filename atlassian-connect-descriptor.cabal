@@ -10,7 +10,7 @@ name:                atlassian-connect-descriptor
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             0.4.5.0
+version:             0.4.6.0
 
 -- A short (one-line) description of the package.
 synopsis:            Code that helps you create a valid Atlassian Connect Descriptor.
@@ -93,9 +93,9 @@ library
 
 Test-Suite test-descriptor
   hs-source-dirs: tests
-  type:        detailed-0.9
+  type:        exitcode-stdio-1.0
 
-  test-module: Test
+  main-is: Main.hs
   other-modules: Util
                  , AssertionHelpers
                  , ValueExtractors

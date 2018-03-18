@@ -128,6 +128,9 @@ module Data.Connect.Descriptor (
    , JIRAProjectAdminTabPanel(..)
    -- ** JIRA Specific Modules
    , JIRASearchRequestView(..)
+   , JIRAIssueGlance(..)
+   , JIRAIssueGlanceContent(..)
+   , JIRAIssueGlanceTarget(..)
    , JIRAReport(..)
    , JIRAReportCategory(..)
    , Target(..)

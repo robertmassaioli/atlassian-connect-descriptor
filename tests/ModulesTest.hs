@@ -14,7 +14,34 @@ moduleTests = TestList
     [ testWebPanelCorrectFormat
     , testGeneralPageCorrectFormat
     , testEmptyModulesAreNotShown
+    , testIssueGlanceCorrectFormat
     ]
+
+testIssueGlanceCorrectFormat :: Test
+testIssueGlanceCorrectFormat = TestCase $ do
+    let jig = JIRAIssueGlance
+                { jigKey = "jira-issue-glance-module"
+                , jigName = simpleText "My glance"
+                , jigContent = JIRAIssueGlanceContentLabel (simpleText "my label")
+                , jigIcon = IconDetails
+                    { iconUrl = "my_icon.svg"
+                    , iconWidth = Just 24
+                    , iconHeight = Just 25
+                    }
+                , jigTarget = JIRAIssueGlanceTargetWebPanel ("/panel_url")
+                , jigConditions = []
+                }
+    let jv = toJSON jig
+    isObject jv @? "Expected the issue glance to be an object"
+    (getString =<< get "key" jv) `isEqualTo` "jira-issue-glance-module"
+    (getString =<< get "value" =<< get "name" jv) `isEqualTo` "My glance"
+    (getString =<< get "type" =<< get "target" jv) `isEqualTo` "web_panel"
+    (getString =<< get "url" =<< get "target" jv) `isEqualTo` "/panel_url"
+    (getString =<< get "type" =<< get "content" jv) `isEqualTo` "label"
+    (getString =<< get "value" =<< get "label" =<< get "content" jv) `isEqualTo` "my label"
+    (get "url" =<< get "icon" jv) `isEqualTo` "my_icon.svg"
+    (getNumber =<< get "width" =<< get "icon" jv) `isEqualTo` 24
+    (getNumber =<< get "height" =<< get "icon" jv) `isEqualTo` 25
 
 testWebPanelCorrectFormat :: Test
 testWebPanelCorrectFormat = TestCase $ do

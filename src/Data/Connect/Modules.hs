@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Data.Connect.Modules
    ( Modules(..)
    , JIRAModules(..)
@@ -15,6 +16,9 @@ module Data.Connect.Modules
    , JIRAGenericTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
    , JIRASearchRequestView(..)
+   , JIRAIssueGlance(..)
+   , JIRAIssueGlanceContent(..)
+   , JIRAIssueGlanceTarget(..)
    , JIRAReport(..)
    , JIRAReportCategory(..)
    , Target(..)
@@ -113,6 +117,7 @@ data JIRAModules = JIRAModules
    , jmJiraProjectAdminTabPanels :: Maybe [JIRAProjectAdminTabPanel]
    , jmJiraIssueTabPanels        :: Maybe [JIRAGenericTabPanel]
    , jmJiraComponentTabPanels    :: Maybe [JIRAGenericTabPanel]
+   , jmJiraIssueGlances          :: Maybe [JIRAIssueGlance]
    , jmJiraReports               :: Maybe [JIRAReport]
    , jmWebhooks                  :: Maybe [Webhook]
    , jmJiraWorkflowPostFunctions :: Maybe [JIRAWorkflowPostFunction]
@@ -140,6 +145,7 @@ instance ToJSON ConfluenceModules where
 emptyJIRAModules :: JIRAModules
 emptyJIRAModules
    = JIRAModules
+      Nothing
       Nothing
       Nothing
       Nothing
@@ -405,6 +411,42 @@ instance ToJSON JIRAPage where
    toJSON = genericToJSON baseOptions
       { fieldLabelModifier = stripFieldNamePrefix "jiraPage"
       }
+
+-- | This module adds a glance to the context area of the new Jira issue view.
+-- Glances can have an icon, content, and status.
+data JIRAIssueGlance = JIRAIssueGlance
+   { jigKey             :: T.Text -- ^ The add-on unique key for this module.
+   , jigName            :: I18nText -- ^ The name of this JIRA Glance.
+   , jigContent         :: JIRAIssueGlanceContent -- ^ This content becomes the label next to the icon. It's handy for communicating a small amount of information.
+   , jigIcon            :: IconDetails -- ^ Specifies an icon to display at the left of the glance view control. The icon resource provided in this field should be 24x24 pixels or larger, preferably in .SVG format.
+   , jigTarget          :: JIRAIssueGlanceTarget -- ^ Specifies the target action when clicking on the glance.
+   , jigConditions      :: [Condition] -- ^ The conditions under which the glance will be shown.
+   } deriving (Show, Generic)
+
+instance ToJSON JIRAIssueGlance where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "jig"
+      }
+
+data JIRAIssueGlanceContent = JIRAIssueGlanceContentLabel
+   { jigclLabel :: I18nText
+   } deriving (Show)
+
+instance ToJSON JIRAIssueGlanceContent where
+   toJSON label@(JIRAIssueGlanceContentLabel {}) = object
+      [ "type" .= T.pack "label"
+      , "label" .= (jigclLabel label)            
+      ]
+
+data JIRAIssueGlanceTarget = JIRAIssueGlanceTargetWebPanel
+   { jigtwpUrl :: T.Text -- ^ The url to the content that will be loaded in the glance iframe.
+   } deriving (Show)
+
+instance ToJSON JIRAIssueGlanceTarget where
+   toJSON wp@(JIRAIssueGlanceTargetWebPanel {}) = object
+      [ "type" .= T.pack "web_panel"
+      , "url" .= (jigtwpUrl wp)
+      ]
 
 -- |  A Search Request View allows you to render a custom representation of a search result. Rendering a custom XML
 -- format is a common example.
