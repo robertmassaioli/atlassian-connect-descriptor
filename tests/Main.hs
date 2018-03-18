@@ -1,11 +1,10 @@
-module Test where
+module Main where
 
 import           ConditionsTest
 import           DescriptorTest
-import qualified Distribution.TestSuite as TS
 import           ModulesTest
 import qualified Test.HUnit             as HU
-import           Util
+import           System.Exit (exitWith, ExitCode(..))
 
 hunitTests :: HU.Test
 hunitTests = HU.TestList
@@ -14,5 +13,8 @@ hunitTests = HU.TestList
     , HU.TestLabel "Descriptor Tests" descriptorTests
     ]
 
-tests :: IO [TS.Test]
-tests = return [ TS.Test (hunitTestInstance hunitTests) ]
+main :: IO ()
+main = do
+    counts <- HU.runTestTT hunitTests
+    let mistakes = HU.errors counts + HU.failures counts
+    exitWith (if mistakes > 0 then ExitFailure mistakes else ExitSuccess)

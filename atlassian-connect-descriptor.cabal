@@ -93,9 +93,9 @@ library
 
 Test-Suite test-descriptor
   hs-source-dirs: tests
-  type:        detailed-0.9
+  type:        exitcode-stdio-1.0
 
-  test-module: Test
+  main-is: Main.hs
   other-modules: Util
                  , AssertionHelpers
                  , ValueExtractors
