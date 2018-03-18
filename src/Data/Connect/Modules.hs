@@ -16,6 +16,9 @@ module Data.Connect.Modules
    , JIRAGenericTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
    , JIRASearchRequestView(..)
+   , JIRAIssueGlance(..)
+   , JIRAIssueGlanceContent(..)
+   , JIRAIssueGlanceTarget(..)
    , JIRAReport(..)
    , JIRAReportCategory(..)
    , Target(..)
@@ -114,6 +117,7 @@ data JIRAModules = JIRAModules
    , jmJiraProjectAdminTabPanels :: Maybe [JIRAProjectAdminTabPanel]
    , jmJiraIssueTabPanels        :: Maybe [JIRAGenericTabPanel]
    , jmJiraComponentTabPanels    :: Maybe [JIRAGenericTabPanel]
+   , jmJiraIssueGlances          :: Maybe [JIRAIssueGlance]
    , jmJiraReports               :: Maybe [JIRAReport]
    , jmWebhooks                  :: Maybe [Webhook]
    , jmJiraWorkflowPostFunctions :: Maybe [JIRAWorkflowPostFunction]
@@ -141,6 +145,7 @@ instance ToJSON ConfluenceModules where
 emptyJIRAModules :: JIRAModules
 emptyJIRAModules
    = JIRAModules
+      Nothing
       Nothing
       Nothing
       Nothing
