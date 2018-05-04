@@ -16,6 +16,8 @@ module Data.Connect.Modules
    , JIRAGenericTabPanel(..)
    , JIRAProjectAdminTabPanel(..)
    , JIRASearchRequestView(..)
+   , JIRAIssueContent(..)
+   , JIRAIssueContentTarget(..)
    , JIRAIssueGlance(..)
    , JIRAIssueGlanceContent(..)
    , JIRAIssueGlanceTarget(..)
@@ -117,6 +119,7 @@ data JIRAModules = JIRAModules
    , jmJiraProjectAdminTabPanels :: Maybe [JIRAProjectAdminTabPanel]
    , jmJiraIssueTabPanels        :: Maybe [JIRAGenericTabPanel]
    , jmJiraComponentTabPanels    :: Maybe [JIRAGenericTabPanel]
+   , jmJiraIssueContents         :: Maybe [JIRAIssueContent]
    , jmJiraIssueGlances          :: Maybe [JIRAIssueGlance]
    , jmJiraReports               :: Maybe [JIRAReport]
    , jmWebhooks                  :: Maybe [Webhook]
@@ -145,6 +148,7 @@ instance ToJSON ConfluenceModules where
 emptyJIRAModules :: JIRAModules
 emptyJIRAModules
    = JIRAModules
+      Nothing
       Nothing
       Nothing
       Nothing
@@ -411,6 +415,32 @@ instance ToJSON JIRAPage where
    toJSON = genericToJSON baseOptions
       { fieldLabelModifier = stripFieldNamePrefix "jiraPage"
       }
+
+-- | This module adds a content button to the context area of the new Jira issue view.
+-- Content can have an icon, tooltip, and target.
+data JIRAIssueContent = JIRAIssueContent
+   { jicKey             :: T.Text -- ^ The add-on unique key for this module.
+   , jicName            :: I18nText -- ^ The name of this JIRA Issue Content.
+   , jicTooltip         :: I18nText -- ^ The tooltip for this JIRA Issue Content.
+   , jicIcon            :: IconDetails -- ^ The icon for this JIRA Issue Content.
+   , jicTarget          :: JIRAIssueContentTarget -- ^ Specifies the target action when clicking on the content.
+   , jicConditions      :: [Condition] -- ^ The conditions under which the content will be shown.
+   } deriving (Show, Generic)
+
+instance ToJSON JIRAIssueContent where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "jic"
+      }
+
+data JIRAIssueContentTarget = JIRAIssueContentTargetWebPanel
+   { jictwpUrl :: T.Text -- ^ The url to the content that will be loaded in the glance iframe.
+   } deriving (Show)
+
+instance ToJSON JIRAIssueContentTarget where
+   toJSON wp@(JIRAIssueContentTargetWebPanel {}) = object
+      [ "type" .= T.pack "web_panel"
+      , "url" .= (jictwpUrl wp)
+      ]
 
 -- | This module adds a glance to the context area of the new Jira issue view.
 -- Glances can have an icon, content, and status.
