@@ -105,6 +105,8 @@ module Data.Connect.Descriptor (
    , Weight
    , ModuleParams
    , noParams
+   -- * Migrations
+   , ApiMigrations(..)
    -- * Lifecycle
    , Lifecycle(..)
    , emptyLifecycle
@@ -207,6 +209,7 @@ data Plugin = Plugin
    , enableLicensing   :: Maybe Bool -- ^ If you are giving away a free add-on then you can set this to false, otherwise set it to true.
    , links             :: HM.HashMap Text URI -- ^ A collection of custom links that you wish to publish with your add-on. Like documentation or bug-tracking links.
    , scopes            :: Maybe [ProductScope] -- ^ The scopes that your add-on requires. See 'ProductScope' for more information.
+   , apiMigrations     :: Maybe ApiMigrations -- ^ The Migrations that this app has opted into.
    } deriving (Show, Generic)
 
 instance ToJSON (Name Plugin)
@@ -214,6 +217,15 @@ instance ToJSON (Name Plugin)
 instance ToJSON Plugin where
    toJSON = genericToJSON baseOptions
       { fieldLabelModifier = stripFieldNamePrefix "plugin"
+      }
+
+data ApiMigrations = ApiMigrations
+   { migrationGdpr :: Bool
+   } deriving (Show, Generic)
+
+instance ToJSON ApiMigrations where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "migration"
       }
 
 -- | A helper method to generate a bare-bones Atlassian Connect add-on by providing only the absolutely required fields.
@@ -241,4 +253,5 @@ pluginDescriptor key' url' auth = Plugin
    , lifecycle = Nothing
    , links = HM.empty
    , scopes = Nothing
+   , apiMigrations = Nothing
    }

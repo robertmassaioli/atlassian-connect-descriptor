@@ -4,13 +4,13 @@
 -- The name of the package.
 name:                atlassian-connect-descriptor
 
--- The package version.  See the Haskell package versioning policy (PVP) 
+-- The package version.  See the Haskell package versioning policy (PVP)
 -- for standards guiding when and how versions should be incremented.
 -- http://www.haskell.org/haskellwiki/Package_versioning_policy
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             0.4.7.0
+version:             0.4.8.0
 
 -- A short (one-line) description of the package.
 synopsis:            Code that helps you create a valid Atlassian Connect Descriptor.
@@ -28,18 +28,18 @@ license-file:        LICENSE
 -- The package author(s).
 author:              Robert Massaioli
 
--- An email address to which users can send suggestions, bug reports, and 
+-- An email address to which users can send suggestions, bug reports, and
 -- patches.
 maintainer:          rmassaioli@atlassian.com
 
 -- A copyright notice.
--- copyright:           
+-- copyright:
 
 category:            Data
 
 build-type:          Simple
 
--- Extra files to be distributed with the package, such as examples or a 
+-- Extra files to be distributed with the package, such as examples or a
 -- README.
 extra-source-files:  README.markdown
 
@@ -57,7 +57,7 @@ flag network-uri
 library
   -- Modules exported by the library.
   exposed-modules:    Data.Connect.Descriptor
-  
+
   -- Modules included in this library but not exported.
   other-modules:      Data.Connect.AesonHelpers
                       , Data.Connect.BaseTypes
@@ -67,10 +67,10 @@ library
                       , Data.Connect.OrphanInstances
                       , Data.Connect.Scopes
                       , Data.Connect.Webhooks
-  
+
   -- LANGUAGE extensions used by modules in this package.
-  -- other-extensions:    
-  
+  -- other-extensions:
+
   -- Other library packages from which modules are imported.
   build-depends:       base         >=4.6 && <5
                        , aeson      >  0.7.0.3
@@ -83,10 +83,10 @@ library
      build-depends: network-uri >= 2.6, network >= 2.6
   else
      build-depends: network-uri < 2.6, network < 2.6
-  
+
   -- Directories containing source files.
   hs-source-dirs:      src
-  
+
   -- Base language which the package is written in.
   default-language:    Haskell2010
   ghc-options: -Wall

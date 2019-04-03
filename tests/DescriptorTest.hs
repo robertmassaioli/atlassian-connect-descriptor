@@ -32,6 +32,7 @@ exampleDescriptor1 = (pluginDescriptor (PluginKey "my-example-connect") baseURL 
         , ("source", toURI "http://bitbucket.org/awesome-devs/connect-addon")
         ]
     , scopes = Just [Read, Admin]
+    , apiMigrations = Just $ ApiMigrations True
     }
 
 exampleModules1 :: Modules
@@ -99,3 +100,4 @@ basicDescriptorTest = TestCase $ do
     (getString =<< get "source" =<< get "links" jv) `isEqualTo` "http://bitbucket.org/awesome-devs/connect-addon"
     (getArray =<< get "scopes" jv) `isEqualTo` ["read", "admin"]
     (not <$> (getBool =<< get "enableLicensing" jv)) @? "Expected licensing to be disabled."
+    (getBool =<< get "gdpr" =<< get "apiMigrations" jv) `isEqualTo` True
