@@ -465,7 +465,7 @@ data JIRAIssueGlanceContent = JIRAIssueGlanceContentLabel
 instance ToJSON JIRAIssueGlanceContent where
    toJSON label@(JIRAIssueGlanceContentLabel {}) = object
       [ "type" .= T.pack "label"
-      , "label" .= (jigclLabel label)            
+      , "label" .= (jigclLabel label)
       ]
 
 data JIRAIssueGlanceTarget = JIRAIssueGlanceTargetWebPanel
@@ -619,6 +619,7 @@ data ExtractionType
    | ExtractionTypeText -- ^ Index the data as a text based type, with words.
    | ExtractionTypeString -- ^ Index the data as an exact string.
    | ExtractionTypeDate -- ^ Index the data as a Date.
+   | ExtractionTypeUser -- ^ Index the data as Atlassian Account IDs.
    deriving(Show)
 
 instance ToJSON ExtractionType where
@@ -626,3 +627,4 @@ instance ToJSON ExtractionType where
    toJSON ExtractionTypeText = stj "text"
    toJSON ExtractionTypeString = stj "string"
    toJSON ExtractionTypeDate = stj "date"
+   toJSON ExtractionTypeUser = stj "user"
