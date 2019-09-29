@@ -57,6 +57,7 @@ testIssueContentCorrectFormat = TestCase $ do
                     }
                 , jicTarget = JIRAIssueContentTargetWebPanel "/panel_url"
                 , jicConditions = []
+                , jicContentPresentConditions = []
                 }
     let jv = toJSON jic
     isObject jv @? "Expected the issue glance to be an object"
