@@ -419,12 +419,13 @@ instance ToJSON JIRAPage where
 -- | This module adds a content button to the context area of the new Jira issue view.
 -- Content can have an icon, tooltip, and target.
 data JIRAIssueContent = JIRAIssueContent
-   { jicKey             :: T.Text -- ^ The add-on unique key for this module.
-   , jicName            :: I18nText -- ^ The name of this JIRA Issue Content.
-   , jicTooltip         :: I18nText -- ^ The tooltip for this JIRA Issue Content.
-   , jicIcon            :: IconDetails -- ^ The icon for this JIRA Issue Content.
-   , jicTarget          :: JIRAIssueContentTarget -- ^ Specifies the target action when clicking on the content.
-   , jicConditions      :: [Condition] -- ^ The conditions under which the content will be shown.
+   { jicKey                      :: T.Text -- ^ The add-on unique key for this module.
+   , jicName                     :: I18nText -- ^ The name of this JIRA Issue Content.
+   , jicTooltip                  :: I18nText -- ^ The tooltip for this JIRA Issue Content.
+   , jicIcon                     :: IconDetails -- ^ The icon for this JIRA Issue Content.
+   , jicTarget                   :: JIRAIssueContentTarget -- ^ Specifies the target action when clicking on the content.
+   , jicConditions               :: [Condition] -- ^ The conditions under which the content could be shown.
+   , jicContentPresentConditions :: [Condition] -- ^ The conditions under which the content will always be shown.
    } deriving (Show, Generic)
 
 instance ToJSON JIRAIssueContent where
