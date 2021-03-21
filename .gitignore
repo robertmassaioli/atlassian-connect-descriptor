@@ -1,5 +1,6 @@
 # Cabal Build files
 /dist
+/dist-newstyle
 /.cabal-sandbox
 /cabal.sandbox.config
 

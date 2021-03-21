@@ -120,6 +120,7 @@ data JIRAModules = JIRAModules
    , jmJiraIssueTabPanels        :: Maybe [JIRAGenericTabPanel]
    , jmJiraComponentTabPanels    :: Maybe [JIRAGenericTabPanel]
    , jmJiraIssueContents         :: Maybe [JIRAIssueContent]
+   , jmJiraIssueFields           :: Maybe [JIRAIssueField]
    , jmJiraIssueGlances          :: Maybe [JIRAIssueGlance]
    , jmJiraReports               :: Maybe [JIRAReport]
    , jmWebhooks                  :: Maybe [Webhook]
@@ -148,6 +149,7 @@ instance ToJSON ConfluenceModules where
 emptyJIRAModules :: JIRAModules
 emptyJIRAModules
    = JIRAModules
+      Nothing
       Nothing
       Nothing
       Nothing
@@ -416,6 +418,67 @@ instance ToJSON JIRAPage where
       { fieldLabelModifier = stripFieldNamePrefix "jiraPage"
       }
 
+-- | This module allows the app to add a new issue field to Jira.
+--
+-- The key of the field, that can be used to reference the field in the REST API, is: `$(app-key)__$(module-key)`.
+--
+-- Available options for fields of the `single_select` or `multi-select` type are managed with the REST API for issue field options.
+data JIRAIssueField = JiraIssueField
+   { jifKey :: T.Text
+   , jifName :: I18nText
+   , jifDescription :: I18nText
+   , jifType :: JiraIssueFieldType
+   , jifExtractions :: Maybe [JiraIssueFieldExtraction]
+   , jifProperty :: Maybe JiraIssueFieldProperty
+   , jifTemplate :: Maybe JiraIssueFieldTemplate
+   } deriving (Show, Generic)
+
+instance ToJSON JIRAIssueField where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "jif"
+      }
+
+-- | Extractions used for JQL search. This is valid only when the type is single_select or multi_select.
+data JiraIssueFieldExtraction = JiraIssueFieldExtraction
+   { jifePath :: T.Text
+   , jifeType :: ExtractionType
+   , jifeName :: Maybe T.Text
+   } deriving (Show, Generic)
+
+instance ToJSON JiraIssueFieldExtraction where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "jife"
+      }
+
+-- | The property that stores the field value.
+--
+-- Required when the type is read_only, otherwise not used.
+--
+-- Defines an issue property that will store the value for the issue field of the read_only type.
+data JiraIssueFieldProperty = JiraIssueFieldProperty
+   { jifpPath :: T.Text
+   , jifpKey :: T.Text
+   , jifpType :: JiraIssueFieldPropertyType
+   } deriving (Show, Generic)
+
+instance ToJSON JiraIssueFieldProperty where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "jifp"
+      }
+
+-- | The template used to render options. This is only valid when the type is single_select or multi_select.
+--
+-- Defines the template used to render issue field options in the UI view.
+data JiraIssueFieldTemplate = JiraIssueFieldTemplate
+   { jiftType :: T.Text
+   , jiftUrl :: T.Text
+   } deriving (Show, Generic)
+
+instance ToJSON JiraIssueFieldTemplate where
+   toJSON = genericToJSON baseOptions
+      { fieldLabelModifier = stripFieldNamePrefix "jift"
+      }
+
 -- | This module adds a content button to the context area of the new Jira issue view.
 -- Content can have an icon, tooltip, and target.
 data JIRAIssueContent = JIRAIssueContent
@@ -612,6 +675,38 @@ instance ToJSON Extraction where
    toJSON = genericToJSON baseOptions
       { fieldLabelModifier = stripFieldNamePrefix "extraction"
       }
+
+data JiraIssueFieldType
+   = JiraIssueFieldTypeString
+   | JiraIssueFieldTypeText
+   | JiraIssueFieldTypeRichText
+   | JiraIssueFieldTypeSingleSelect
+   | JiraIssueFieldTypeMultiSelect
+   | JiraIssueFieldTypeNumber
+   | JiraIssueFieldTypeReadOnly
+   deriving (Show)
+
+instance ToJSON JiraIssueFieldType where
+   toJSON JiraIssueFieldTypeString = stj "string"
+   toJSON JiraIssueFieldTypeText = stj "text"
+   toJSON JiraIssueFieldTypeRichText = stj "rich_text"
+   toJSON JiraIssueFieldTypeSingleSelect = stj "single_select"
+   toJSON JiraIssueFieldTypeMultiSelect = stj "multi_select"
+   toJSON JiraIssueFieldTypeNumber = stj "number"
+   toJSON JiraIssueFieldTypeReadOnly = stj "read_only"
+
+-- | The style in which the data should be extracted and indexed. For example, you may want the data to be treated as a
+-- Date or as a Number.
+data JiraIssueFieldPropertyType
+   = JiraIssueFieldPropertyTypeNumber -- ^ Index the data as a numeric type.
+   | JiraIssueFieldPropertyTypeString -- ^ Index the data as an exact string.
+   | JiraIssueFieldPropertyTypeDate -- ^ Index the data as a Date.
+   deriving(Show)
+
+instance ToJSON JiraIssueFieldPropertyType where
+   toJSON JiraIssueFieldPropertyTypeNumber = stj "number"
+   toJSON JiraIssueFieldPropertyTypeString = stj "string"
+   toJSON JiraIssueFieldPropertyTypeDate = stj "date"
 
 -- | The style in which the data should be extracted and indexed. For example, you may want the data to be treated as a
 -- Date or as a Number.
