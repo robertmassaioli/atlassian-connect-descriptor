@@ -5,6 +5,14 @@ image: haskell:8.10.4
 pipelines:
    default:
      - step:
+         caches:
+          - stack-home
+          - stack
          script:
            - stack build
            - stack test
+
+definitions:
+  caches:
+    stack-home: ~/.stack
+    stack: .stack-work
