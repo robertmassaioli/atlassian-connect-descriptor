@@ -5,6 +5,9 @@
 /.cabal-sandbox
 /cabal.sandbox.config
 
+# Stack build files
+/atlassian-connect-descriptor.cabal
+
 # IntelliJ Idea
 *.iml
 /.idea
