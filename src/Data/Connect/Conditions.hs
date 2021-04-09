@@ -16,6 +16,7 @@ import           Data.Aeson
 import           Data.Connect.AesonHelpers
 import           Data.Connect.OrphanInstances ()
 import           GHC.Generics
+import qualified Data.Text           as T
 import qualified Data.HashMap.Strict as HM
 
 -- | A 'Condition' can be placed on an Atlassian Connect Module to cause it to display or not based on the result it
@@ -69,8 +70,10 @@ instance ToJSON Condition where
       ]
    toJSON cc@(CompositeCondition {}) = object [ compositionConditionKey cc .= subConditions cc]
 
+compositionConditionKey :: Condition -> T.Text
 compositionConditionKey (CompositeCondition _ AndCondition) = "and"
 compositionConditionKey (CompositeCondition _ OrCondition) = "or"
+compositionConditionKey _ = error "This method should not have been passed a non-composite condition"
 
 -- | Composite Conditions can be joined together to behave as a single condition. The way that you can join them together
 -- is decided by the condition type.
