@@ -1,14 +1,18 @@
 # This is a sample build configuration for Haskell.
 # Do not use tabs to indent your configuration
-# You can specify a custom docker image from Dockerhub# for your build environment      
-image: haskell:7.10.3
+# You can specify a custom docker image from Dockerhub# for your build environment
+image: haskell:8.10.4
 pipelines:
    default:
      - step:
+         caches:
+          - stack-home
+          - stack
          script:
-           - cabal sandbox init
-           - cabal update
-           - cabal install --enable-tests --only-dependencies
-           - cabal configure --enable-tests
-           - cabal build
-           - cabal test
+           - stack build
+           - stack test
+
+definitions:
+  caches:
+    stack-home: ~/.stack
+    stack: .stack-work
