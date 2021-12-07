@@ -227,12 +227,14 @@ instance ToJSON Plugin where
 
 data ApiMigrations = ApiMigrations
    { migrationGdpr :: Bool
+   , migrationSignedInstall :: Bool
    } deriving (Show, Generic)
 
 instance ToJSON ApiMigrations where
-   toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "migration"
-      }
+   toJSON am = object
+      [ "gdpr" .= migrationGdpr am
+      , "signed-install" .= migrationSignedInstall am
+      ]
 
 -- | A helper method to generate a bare-bones Atlassian Connect add-on by providing only the absolutely required fields.
 -- You can then use Haskell record syntax to update the plugin with more details. For example:
