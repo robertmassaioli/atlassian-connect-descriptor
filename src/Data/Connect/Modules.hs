@@ -74,12 +74,12 @@ jiraEntityProperties
 -}
 
 import           Data.Aeson
-import           Data.Aeson.Types
+import qualified Data.Aeson.Types          as DAT
+import qualified Data.Aeson.KeyMap         as DAK
 import           Data.Connect.AesonHelpers
 import           Data.Connect.BaseTypes
 import           Data.Connect.Conditions
 import           Data.Connect.Webhooks
-import qualified Data.HashMap.Strict       as HM
 import qualified Data.Text                 as T
 import           GHC.Generics
 
@@ -101,7 +101,7 @@ data Modules = Modules
 
 instance ToJSON Modules where
    toJSON modules = case (jm, cm) of
-      (Object jiraObject, Object confluenceObject) -> Object $ HM.union jiraObject confluenceObject
+      (Object jiraObject, Object confluenceObject) -> Object $ DAK.union jiraObject confluenceObject
       _ -> Null
       where
          jm = toJSON . jiraModules $ modules
@@ -184,11 +184,11 @@ emptyConfluenceModules = ConfluenceModules Nothing Nothing
 type Weight = Integer
 
 -- | The standard representation for module parameters.
-type ModuleParams = HM.HashMap T.Text T.Text
+type ModuleParams = DAK.KeyMap T.Text
 
 -- | No parameters. A useful helper when you don't want to pass any parameters to a module.
 noParams :: ModuleParams
-noParams = HM.empty
+noParams = DAK.empty
 
 -- | A 'JIRAWebSection' represents a location in the host application that you can add 'WebItem's to. In this way you
 -- can give your add-on sections to inject content into.
@@ -297,14 +297,14 @@ tp :: String -> T.Text
 tp = T.pack
 
 instance ToJSON Target where
-   toJSON (TargetPage) = object [tp "type" .= tp "page"]
-   toJSON (TargetDialog potentialOptions) = object $ tp "type" .= tp "dialog" :
+   toJSON (TargetPage) = object [("type" :: DAT.Key) .= tp "page"]
+   toJSON (TargetDialog potentialOptions) = object $ ("type" :: DAT.Key) .= tp "dialog" :
       case potentialOptions of
-         Just options -> [tp "options" .= toJSON options]
+         Just options -> [("options" :: DAT.Key) .= toJSON options]
          Nothing -> []
-   toJSON (TargetInlineDialog potentialOptions) = object $ tp "type" .= tp "inlinedialog" :
+   toJSON (TargetInlineDialog potentialOptions) = object $ ("type" :: DAT.Key) .= tp "inlinedialog" :
       case potentialOptions of
-               Just options -> [tp "options" .= toJSON options]
+               Just options -> [("options" :: DAT.Key) .= toJSON options]
                Nothing -> []
 
 -- | Options for a dialog that a link may be opened into.

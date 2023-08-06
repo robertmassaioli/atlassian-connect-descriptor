@@ -169,8 +169,7 @@ module Data.Connect.Descriptor (
    , ProductScope(..)
    ) where
 
-import           Data.Aeson
-import           Data.Aeson.Types
+import qualified Data.Aeson as DA
 import           Data.Connect.AesonHelpers
 import           Data.Connect.BaseTypes
 import           Data.Connect.Conditions
@@ -218,11 +217,11 @@ data Plugin = Plugin
    , apiMigrations     :: Maybe ApiMigrations -- ^ The Migrations that this app has opted into.
    } deriving (Show, Generic)
 
-instance ToJSON (Name Plugin)
+instance DA.ToJSON (Name Plugin)
 
-instance ToJSON Plugin where
-   toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "plugin"
+instance DA.ToJSON Plugin where
+   toJSON = DA.genericToJSON baseOptions
+      { DA.fieldLabelModifier = stripFieldNamePrefix "plugin"
       }
 
 data ApiMigrations = ApiMigrations
@@ -230,10 +229,10 @@ data ApiMigrations = ApiMigrations
    , migrationSignedInstall :: Bool
    } deriving (Show, Generic)
 
-instance ToJSON ApiMigrations where
-   toJSON am = object
-      [ "gdpr" .= migrationGdpr am
-      , "signed-install" .= migrationSignedInstall am
+instance DA.ToJSON ApiMigrations where
+   toJSON am = DA.object
+      [ ("gdpr" :: DA.Key) DA..= migrationGdpr am
+      , ("signed-install" :: DA.Key) DA..= migrationSignedInstall am
       ]
 
 -- | A helper method to generate a bare-bones Atlassian Connect add-on by providing only the absolutely required fields.

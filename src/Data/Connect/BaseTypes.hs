@@ -19,8 +19,8 @@ module Data.Connect.BaseTypes
    )
    where
 
-import           Data.Aeson
-import           Data.Aeson.Types
+import qualified Data.Aeson                   as DA
+import qualified Data.Aeson.Types             as DAT
 import           Data.Connect.AesonHelpers
 import           Data.Connect.OrphanInstances ()
 import           Data.Text
@@ -34,7 +34,7 @@ data Key t a = Key t deriving (Show, Eq, Generic)
 -- | This data type represents an Atlassian Connect Add-on key.
 data PluginKey = PluginKey Text deriving (Show, Eq, Generic)
 
-instance ToJSON PluginKey
+instance DA.ToJSON PluginKey
 
 -- | Represents a timeout in seconds.
 newtype Timeout = Timeout DTU.Second deriving (Show, Eq, Enum, Num, Ord, Real, Integral)
@@ -76,9 +76,9 @@ data I18nText = I18nText
    , dI18n  :: Maybe Text -- ^ The potential i18n key that will be used when we eventually have I18n support: <http://goo.gl/9vJEsW>
    } deriving (Show, Generic)
 
-instance ToJSON I18nText where
-   toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "d"
+instance DA.ToJSON I18nText where
+   toJSON = DAT.genericToJSON baseOptions
+      { DA.fieldLabelModifier = stripFieldNamePrefix "d"
       }
 
 -- | Since there is currently no I18n support (<http://goo.gl/9vJEsW>) we have this helper method to quickly create an 'I18nText' from a standard
@@ -91,34 +91,34 @@ data URLBean = URLBean
    { ubUrl :: Text -- ^ The raw URL.
    } deriving (Show, Generic)
 
-instance ToJSON URLBean where
-   toJSON = genericToJSON baseOptions
-         { fieldLabelModifier = stripFieldNamePrefix "ub"
+instance DA.ToJSON URLBean where
+   toJSON = DAT.genericToJSON baseOptions
+         { DA.fieldLabelModifier = stripFieldNamePrefix "ub"
          }
 
 -- | Wrap a regular 'Text' based URL inside a URLBean.
 toUrl :: Text -> URLBean
 toUrl = URLBean
 
-instance ToJSON (Name PluginKey)
-instance ToJSON (Name Vendor)
+instance DA.ToJSON (Name PluginKey)
+instance DA.ToJSON (Name Vendor)
 
-instance ToJSON IconDetails where
-   toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "icon"
+instance DA.ToJSON IconDetails where
+   toJSON = DAT.genericToJSON baseOptions
+      { DA.fieldLabelModifier = stripFieldNamePrefix "icon"
       }
 
-instance ToJSON Vendor where
-   toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "vendor"
+instance DA.ToJSON Vendor where
+   toJSON = DAT.genericToJSON baseOptions
+      { DA.fieldLabelModifier = stripFieldNamePrefix "vendor"
       }
 
-instance ToJSON Authentication where
-   toJSON = genericToJSON baseOptions
-      { fieldLabelModifier = stripFieldNamePrefix "auth"
+instance DA.ToJSON Authentication where
+   toJSON = DAT.genericToJSON baseOptions
+      { DA.fieldLabelModifier = stripFieldNamePrefix "auth"
       }
 
-instance ToJSON AuthType where
+instance DA.ToJSON AuthType where
    toJSON Jwt  = "jwt"
    toJSON None  = "none"
 
@@ -128,6 +128,6 @@ data Length
    | Percentage Integer -- ^ Specify a length as a percentage in the range [0-100].
    deriving (Show, Generic)
 
-instance ToJSON Length where
-   toJSON (Pixels x) = String . pack $ (show x ++ "px")
-   toJSON (Percentage x) = String . pack $ (show x ++ "%")
+instance DA.ToJSON Length where
+   toJSON (Pixels x) = DAT.String . pack $ (show x ++ "px")
+   toJSON (Percentage x) = DAT.String . pack $ (show x ++ "%")
