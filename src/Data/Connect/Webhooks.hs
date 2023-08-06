@@ -6,7 +6,6 @@ module Data.Connect.Webhooks
    ) where
 
 import           Data.Aeson
-import           Data.Aeson.Types
 import           Data.Connect.AesonHelpers
 import           Data.Connect.OrphanInstances ()
 import qualified Data.Text                    as T
