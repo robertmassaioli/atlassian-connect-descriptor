@@ -9,7 +9,7 @@ category: Data
 author: Robert Massaioli
 maintainer: rmassaioli@atlassian.com
 license: Apache-2.0
-git: git@bitbucket.org:robertmassaioli/atlassian-connect-descriptor.git
+git: git@github.com:robertmassaioli/atlassian-connect-descriptor.git
 extra-source-files:
 - README.markdown
 library:
